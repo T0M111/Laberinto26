@@ -1,0 +1,55 @@
+name: CI - Verificación de Código
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    name: Ejecutar Código Python
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        python-version: ['3.9', '3.10', '3.11']
+    
+    steps:
+    - name: Checkout código
+      uses: actions/checkout@v4
+    
+    - name: Configurar Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Mostrar versión de Python
+      run: python --version
+    
+    - name: Verificar sintaxis de archivos Python
+      run: |
+        python -m py_compile *.py
+    
+    - name: Ejecutar programa principal
+      run: |
+        if [ -f main.py ]; then
+          python main.py
+        fi
+    
+    - name: Verificar que no hay errores de importación
+      run: |
+        python -c "
+        import sys
+        try:
+            import elemento_mapa
+            import pared
+            import puerta
+            import habitacion
+            import laberinto
+            import juego
+            print('✓ Todas las importaciones exitosas')
+        except ImportError as e:
+            print(f'✗ Error de importación: {e}')
+            sys.exit(1)
+        "

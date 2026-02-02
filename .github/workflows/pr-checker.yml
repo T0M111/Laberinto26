@@ -1,0 +1,57 @@
+name: PR Checker - Validación de Pull Requests
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  pr-validation:
+    name: Validar Pull Request
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout código
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Verificar título del PR
+      run: |
+        PR_TITLE="${{ github.event.pull_request.title }}"
+        echo "Título del PR: $PR_TITLE"
+        
+        # Verificar que el título siga el formato convencional
+        if [[ "$PR_TITLE" =~ ^(feat|fix|docs|refactor|test|chore): ]]; then
+          echo "✓ Título del PR sigue formato convencional"
+        else
+          echo "⚠ Sugerencia: Usar formato 'tipo: descripción' (feat, fix, docs, etc.)"
+        fi
+    
+    - name: Configurar Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    
+    - name: Verificar archivos modificados
+      run: |
+        echo "Archivos modificados en este PR:"
+        git diff --name-only origin/main...HEAD
+    
+    - name: Ejecutar verificación rápida
+      run: |
+        python -m py_compile *.py 2>/dev/null || echo "Algunos archivos no se compilaron"
+        
+        if [ -f main.py ]; then
+          echo "Ejecutando main.py..."
+          python main.py
+        fi
+    
+    - name: Resumen del PR
+      run: |
+        echo "📊 Resumen del Pull Request"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo "Rama: ${{ github.head_ref }}"
+        echo "Autor: ${{ github.event.pull_request.user.login }}"
+        echo "Commits: ${{ github.event.pull_request.commits }}"
+        echo "Archivos Python encontrados:"
+        ls -la *.py 2>/dev/null || echo "No hay archivos .py en la raíz"

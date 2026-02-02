@@ -1,0 +1,41 @@
+name: Linting - Calidad de Código
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint:
+    name: Análisis de Calidad
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout código
+      uses: actions/checkout@v4
+    
+    - name: Configurar Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    
+    - name: Instalar herramientas de linting
+      run: |
+        python -m pip install --upgrade pip
+        pip install flake8 black pylint
+    
+    - name: Ejecutar Flake8 (verificación de estilo)
+      run: |
+        # Ignorar líneas muy largas y algunos errores comunes en proyectos educativos
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        flake8 . --count --max-line-length=100 --statistics --exit-zero
+      continue-on-error: true
+    
+    - name: Verificar formato con Black
+      run: |
+        black --check --line-length=100 *.py
+      continue-on-error: true
+    
+    - name: Análisis con Pylint
+      run: |
+        pylint *.py --max-line-length=100 --exit-zero
+      continue-on-error: true

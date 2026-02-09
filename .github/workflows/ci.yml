@@ -48,6 +48,9 @@ jobs:
             import habitacion
             import laberinto
             import juego
+            import decorator
+            import bomba
+            import hechizo
             print('✓ Todas las importaciones exitosas')
         except ImportError as e:
             print(f'✗ Error de importación: {e}')

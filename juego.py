@@ -1,10 +1,12 @@
 """
 Clase Juego - Implementa el patrón Factory Method.
+Usa el patrón Strategy (Orientacion) para los lados de las habitaciones.
 """
 from pared import Pared
 from puerta import Puerta
 from habitacion import Habitacion
 from laberinto import Laberinto
+from orientacion import Norte, Sur, Este, Oeste
 
 
 class Juego:
@@ -74,16 +76,16 @@ class Juego:
         puerta = self.fabricar_puerta()
         
         # Configurar la habitación 1
-        h1.establecer_lado("Norte", self.fabricar_pared())
-        h1.establecer_lado("Este", puerta)
-        h1.establecer_lado("Sur", self.fabricar_pared())
-        h1.establecer_lado("Oeste", self.fabricar_pared())
+        h1.establecer_lado(Norte(), self.fabricar_pared())
+        h1.establecer_lado(Este(), puerta)
+        h1.establecer_lado(Sur(), self.fabricar_pared())
+        h1.establecer_lado(Oeste(), self.fabricar_pared())
         
         # Configurar la habitación 2
-        h2.establecer_lado("Norte", self.fabricar_pared())
-        h2.establecer_lado("Este", self.fabricar_pared())
-        h2.establecer_lado("Sur", self.fabricar_pared())
-        h2.establecer_lado("Oeste", puerta)
+        h2.establecer_lado(Norte(), self.fabricar_pared())
+        h2.establecer_lado(Este(), self.fabricar_pared())
+        h2.establecer_lado(Sur(), self.fabricar_pared())
+        h2.establecer_lado(Oeste(), puerta)
         
         # Agregar habitaciones al laberinto
         laberinto.agregar_habitacion(h1)

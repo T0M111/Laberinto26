@@ -1,17 +1,18 @@
 """
-Clase Puerta - Elemento concreto del mapa.
+Clase Puerta - Hoja concreta del mapa (Composite).
 """
-from elemento_mapa import ElementoMapa
+from hoja import Hoja
 
 
-class Puerta(ElementoMapa):
+class Puerta(Hoja):
     """
     Representa una puerta en el laberinto.
-    Es un elemento que conecta dos habitaciones.
+    Es un elemento hoja que conecta dos habitaciones; no contiene hijos.
     """
-    
+
     def __init__(self):
         """Inicializa una puerta."""
+        super().__init__()
         self.abierta = False
     
     def abrir(self):

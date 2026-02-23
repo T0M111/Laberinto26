@@ -1,5 +1,5 @@
 """
-Programa principal - Demostración de los patrones Factory Method, Decorator, Strategy y Composite.
+Programa principal - Demostración de los patrones Factory Method, Decorator, Strategy, Composite e Iterator.
 """
 from juego import Juego
 from orientacion import Norte, Sur, Este, Oeste
@@ -147,6 +147,45 @@ def demo_composite():
     print("=" * 60)
 
 
+def demo_iterator():
+    """Demuestra el patrón Iterator sobre la estructura del laberinto."""
+    print("\n" + "=" * 60)
+    print("9. Demostración del Patrón Iterator:")
+    print("=" * 60)
+
+    juego = Juego()
+    laberinto = juego.crear_laberinto()
+
+    # --- Iterador interno: recorrer() como generador ---
+    print("\nIterador interno - recorrer() pre-order sobre el laberinto:")
+    for elemento in laberinto.recorrer():
+        tipo = type(elemento).__name__
+        print(f"  {tipo}: {elemento}")
+
+    # --- Iterador externo: protocolo __iter__ de Python ---
+    print("\nIterador externo - `for elem in laberinto` (via __iter__):")
+    tipos = [type(e).__name__ for e in laberinto]
+    print(f"  Elementos recorridos: {tipos}")
+
+    # --- Filtrar solo hojas (Pared / Puerta) ---
+    print("\nSolo hojas (Pared y Puerta) dentro del laberinto:")
+    from hoja import Hoja
+    for elem in laberinto:
+        if isinstance(elem, Hoja):
+            print(f"  {elem}  [padre: {elem.padre}]")
+
+    # --- Iterador sobre una habitacion concreta ---
+    hab1 = laberinto.obtener_habitacion(1)
+    print(f"\nIterando sobre {hab1} individualmente:")
+    for elem in hab1:
+        print(f"  {type(elem).__name__}: {elem}")
+
+    print("\n" + "=" * 60)
+    print("Fin demostración Iterator")
+    print("=" * 60)
+
+
 if __name__ == "__main__":
     main()
     demo_composite()
+    demo_iterator()

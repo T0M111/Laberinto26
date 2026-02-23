@@ -48,3 +48,13 @@ class Contenedor(ElementoMapa):
             Lista de ElementoMapa hijos.
         """
         return list(self._hijos)
+
+    def recorrer(self):
+        """
+        Iterador interno para un Contenedor (Iterator, recorrido en profundidad pre-order).
+        Genera este nodo primero y luego recorre recursivamente cada hijo.
+        Los hijos pueden ser Hojas o Contenedores; se delega en su propio recorrer().
+        """
+        yield self
+        for hijo in self._hijos:
+            yield from hijo.recorrer()

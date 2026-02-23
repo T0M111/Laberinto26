@@ -1,18 +1,18 @@
 """
-Clase Pared - Elemento concreto del mapa.
+Clase Pared - Hoja concreta del mapa (Composite).
 """
-from elemento_mapa import ElementoMapa
+from hoja import Hoja
 
 
-class Pared(ElementoMapa):
+class Pared(Hoja):
     """
     Representa una pared en el laberinto.
-    Es un elemento que bloquea el paso.
+    Es un elemento hoja que bloquea el paso; no contiene hijos.
     """
-    
+
     def __init__(self):
         """Inicializa una pared."""
-        pass
+        super().__init__()
     
     def __str__(self):
         """Representación en string de la pared."""

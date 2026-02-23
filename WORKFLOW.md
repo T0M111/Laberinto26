@@ -80,8 +80,21 @@ git pull origin main
     - `bicho.py`: Clase `Bicho` que delega comportamiento en un objeto `Modo`
     - `habitacion.py`: Actualizada para usar objetos `Orientacion` como claves en lugar de strings
 
+- ✅ **Composite** (v0.4.0) - Implementado
+  - Clases: `Hoja`, `Contenedor`
+  - Rama: `feature/composite`
+  - Cambios:
+    - `elemento_mapa.py`: Añadido atributo `+padre` e interfaz `agregar_hijo` / `eliminar_hijo` / `obtener_hijos`
+    - `hoja.py`: Nueva clase abstracta `Hoja(ElementoMapa)` — nodo hoja sin hijos
+    - `contenedor.py`: Nueva clase abstracta `Contenedor(ElementoMapa)` — nodo compuesto con `+padre` y `+hijos`
+    - `pared.py`: `Pared` ahora extiende `Hoja`
+    - `puerta.py`: `Puerta` ahora extiende `Hoja`
+    - `laberinto.py`: `Laberinto` ahora extiende `Contenedor`; `agregar_habitacion` registra también como hijo Composite
+    - `habitacion.py`: `Habitacion` ahora extiende `Contenedor`; `establecer_lado` registra el elemento como hijo Composite
+
 ## Versionado
 
 - `v0.1.0` - Factory Method
 - `v0.2.0` - Decorator
 - `v0.3.0` - Strategy
+- `v0.4.0` - Composite

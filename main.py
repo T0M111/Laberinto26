@@ -1,5 +1,5 @@
 """
-Programa principal - Demostración de los patrones Factory Method, Decorator y Strategy.
+Programa principal - Demostración de los patrones Factory Method, Decorator, Strategy y Composite.
 """
 from juego import Juego
 from orientacion import Norte, Sur, Este, Oeste
@@ -101,5 +101,52 @@ def main():
     print("=" * 60)
 
 
+def _imprimir_arbol(elemento, nivel=0):
+    """Recorre recursivamente el árbol Composite e imprime su estructura."""
+    prefijo = "   " * nivel + ("+-- " if nivel > 0 else "")
+    print(f"{prefijo}{elemento}")
+    for hijo in elemento.obtener_hijos():
+        _imprimir_arbol(hijo, nivel + 1)
+
+
+def demo_composite():
+    """Demuestra el patrón Composite sobre la estructura del laberinto."""
+    print("\n" + "=" * 60)
+    print("8. Demostración del Patrón Composite:")
+    print("=" * 60)
+
+    juego = Juego()
+    laberinto = juego.crear_laberinto()
+
+    # Mostrar el árbol Composite completo
+    print("\nArbol Composite del laberinto:")
+    _imprimir_arbol(laberinto)
+
+    # Navegar con obtener_hijos() desde el laberinto
+    print("\nHijos directos del Laberinto (Contenedor):")
+    for hijo in laberinto.obtener_hijos():
+        print(f"  {hijo}  [tipo: {type(hijo).__name__}, padre: {hijo.padre}]")
+
+    # Navegar hijos de la primera habitación
+    hab1 = laberinto.obtener_habitacion(1)
+    print(f"\nHijos de {hab1} (Contenedor):")
+    for hijo in hab1.obtener_hijos():
+        print(f"  {hijo}  [tipo: {type(hijo).__name__}, hijos: {hijo.obtener_hijos()}]")
+
+    # Verificar que las hojas no admiten hijos
+    from pared import Pared
+    pared = Pared()
+    print("\nIntentando agregar hijo a una Hoja (Pared):")
+    try:
+        pared.agregar_hijo(juego.fabricar_pared())
+    except TypeError as e:
+        print(f"  Error esperado -> {e}")
+
+    print("\n" + "=" * 60)
+    print("Fin demostración Composite")
+    print("=" * 60)
+
+
 if __name__ == "__main__":
     main()
+    demo_composite()

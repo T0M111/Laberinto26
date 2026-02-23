@@ -1,40 +1,44 @@
 """
-Clase Laberinto - Elemento concreto del mapa que contiene toda la estructura.
+Clase Laberinto - Contenedor concreto del mapa (Composite).
 """
-from elemento_mapa import ElementoMapa
+from contenedor import Contenedor
 
 
-class Laberinto(ElementoMapa):
+class Laberinto(Contenedor):
     """
     Representa el laberinto completo.
-    Contiene todas las habitaciones del juego.
+    Contenedor de nivel superior: sus hijos directos son Habitacion.
+    Extiende Contenedor del patrón Composite.
     """
-    
+
     def __init__(self):
         """Inicializa el laberinto."""
-        self.habitaciones = {}
-    
+        super().__init__()
+        self.habitaciones = {}  # Acceso rápido por número (mantiene compatibilidad)
+
     def agregar_habitacion(self, habitacion):
         """
         Agrega una habitación al laberinto.
-        
+        La registra en el dict y también como hijo Composite.
+
         Args:
             habitacion: Objeto Habitacion a agregar.
         """
         self.habitaciones[habitacion.numero] = habitacion
-    
+        self.agregar_hijo(habitacion)
+
     def obtener_habitacion(self, numero):
         """
         Obtiene una habitación por su número.
-        
+
         Args:
             numero: Número de la habitación.
-            
+
         Returns:
             La habitación correspondiente o None si no existe.
         """
         return self.habitaciones.get(numero)
-    
+
     def __str__(self):
         """Representación en string del laberinto."""
         return f"Laberinto con {len(self.habitaciones)} habitaciones"

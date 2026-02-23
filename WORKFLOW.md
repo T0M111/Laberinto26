@@ -71,7 +71,17 @@ git pull origin main
     - feat: Añadir decorador concreto Bomba
     - feat: Añadir decorador concreto Hechizo
 
+- ✅ **Strategy** (v0.3.0) - Implementado
+  - Clases: `Orientacion`, `Norte`, `Sur`, `Este`, `Oeste`, `Modo`, `Agresivo`, `Perezoso`, `Bicho`
+  - Rama: `feature/strategy`
+  - Cambios:
+    - `orientacion.py`: Interfaz Strategy `Orientacion` con estrategias concretas `Norte`, `Sur`, `Este`, `Oeste`
+    - `modo.py`: Interfaz Strategy `Modo` con estrategias concretas `Agresivo`, `Perezoso`
+    - `bicho.py`: Clase `Bicho` que delega comportamiento en un objeto `Modo`
+    - `habitacion.py`: Actualizada para usar objetos `Orientacion` como claves en lugar de strings
+
 ## Versionado
 
 - `v0.1.0` - Factory Method
 - `v0.2.0` - Decorator
+- `v0.3.0` - Strategy

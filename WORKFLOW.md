@@ -92,9 +92,19 @@ git pull origin main
     - `laberinto.py`: `Laberinto` ahora extiende `Contenedor`; `agregar_habitacion` registra también como hijo Composite
     - `habitacion.py`: `Habitacion` ahora extiende `Contenedor`; `establecer_lado` registra el elemento como hijo Composite
 
+- ✅ **Iterator** (v0.5.0) - Implementado
+  - Rama: `feature/iterator`
+  - Cambios:
+    - `elemento_mapa.py`: Añadido método abstracto `+recorrer()` e `__iter__` que delega en él
+    - `hoja.py`: `Hoja.recorrer()` — generador que solo produce `self` (nodo terminal)
+    - `contenedor.py`: `Contenedor.recorrer()` — generador pre-order que produce `self` y recursa en cada hijo con `yield from`
+    - Iterador interno: uso directo de `elemento.recorrer()`
+    - Iterador externo: uso con `for elem in elemento` vía protocolo `__iter__`
+
 ## Versionado
 
 - `v0.1.0` - Factory Method
 - `v0.2.0` - Decorator
 - `v0.3.0` - Strategy
 - `v0.4.0` - Composite
+- `v0.5.0` - Iterator

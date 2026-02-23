@@ -24,3 +24,10 @@ class Hoja(ElementoMapa):
 
     def obtener_hijos(self):
         return []
+
+    def recorrer(self):
+        """
+        Iterador interno para una Hoja.
+        Una hoja no tiene hijos, por lo que sólo se genera a sí misma.
+        """
+        yield self

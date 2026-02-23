@@ -101,6 +101,16 @@ git pull origin main
     - Iterador interno: uso directo de `elemento.recorrer()`
     - Iterador externo: uso con `for elem in elemento` vía protocolo `__iter__`
 
+- ✅ **Template Method** (v0.6.0) - Implementado
+  - Referencia: *Design Patterns: Elements of Reusable Object-Oriented Software* (GoF)
+  - Rama: `feature/template-method`
+  - Cambios:
+    - `modo.py`: `Modo.actua()` es ahora el Template Method que define el esqueleto del algoritmo llamando a `ataca()` y `duerme()`; métodos primitivos con implementación por defecto (hooks) redefinidos en subclases
+    - `Agresivo`: redefine `ataca()` con comportamiento agresivo
+    - `Perezoso`: redefine `duerme()` con comportamiento perezoso
+    - `bicho.py`: `Bicho.actuar()` ahora invoca `modo.actua(self)` (Template Method)
+    - Se eliminó el método abstracto `ejecutar()` en favor del Template Method `actua()`
+
 ## Versionado
 
 - `v0.1.0` - Factory Method
@@ -108,3 +118,4 @@ git pull origin main
 - `v0.3.0` - Strategy
 - `v0.4.0` - Composite
 - `v0.5.0` - Iterator
+- `v0.6.0` - Template Method

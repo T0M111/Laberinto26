@@ -1,23 +1,53 @@
 """
-Patrón Strategy - Modo de comportamiento de un Bicho.
+Patrón Strategy + Template Method - Modo de comportamiento de un Bicho.
 Clase abstracta Modo y sus estrategias concretas: Agresivo, Perezoso.
+
+El método actua() es un Template Method (GoF - Design Patterns: Elements of
+Reusable Object-Oriented Software) que define el esqueleto del algoritmo de
+comportamiento, delegando los pasos concretos ataca() y duerme() a las
+subclases.
 """
 from abc import ABC, abstractmethod
 
 
 class Modo(ABC):
     """
-    Clase abstracta que define la interfaz Strategy para el comportamiento
-    de un Bicho dentro del laberinto.
+    Clase abstracta que combina Strategy + Template Method.
+    - Strategy: Bicho delega su comportamiento en un objeto Modo intercambiable.
+    - Template Method: actua() define el esqueleto del algoritmo y llama a los
+      métodos primitivos ataca() y duerme(), que cada subclase redefine.
     """
 
-    @abstractmethod
-    def ejecutar(self, bicho):
+    # --- Template Method ---
+
+    def actua(self, bicho):
         """
-        Ejecuta el comportamiento correspondiente al modo.
+        Template Method (GoF).
+        Define el algoritmo general de comportamiento de un Bicho.
+        Llama a los métodos primitivos ataca() y duerme(), cuya
+        implementación concreta depende de la subclase.
 
         Args:
             bicho: El Bicho que actúa según este modo.
+        """
+        self.ataca(bicho)
+        self.duerme(bicho)
+
+    # --- Métodos primitivos (hooks) ---
+
+    def ataca(self, bicho):
+        """
+        Paso del template method: atacar.
+        Implementación por defecto: no hace nada (hook).
+        Redefinido en Agresivo.
+        """
+        pass
+
+    def duerme(self, bicho):
+        """
+        Paso del template method: dormir.
+        Implementación por defecto: no hace nada (hook).
+        Redefinido en Perezoso.
         """
         pass
 
@@ -36,8 +66,9 @@ class Agresivo(Modo):
     def obtener_nombre(self):
         return "Agresivo"
 
-    def ejecutar(self, bicho):
-        print(f"{bicho} actúa en modo Agresivo: ¡Busca y ataca!")
+    def ataca(self, bicho):
+        """Paso concreto del Template Method: ataque agresivo."""
+        print(f"  {bicho} -> ¡Ataca ferozmente!")
 
 
 class Perezoso(Modo):
@@ -46,5 +77,6 @@ class Perezoso(Modo):
     def obtener_nombre(self):
         return "Perezoso"
 
-    def ejecutar(self, bicho):
-        print(f"{bicho} actúa en modo Perezoso: descansa tranquilamente.")
+    def duerme(self, bicho):
+        """Paso concreto del Template Method: duerme profundamente."""
+        print(f"  {bicho} -> Duerme profundamente... zzz")

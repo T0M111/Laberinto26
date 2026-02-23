@@ -1,5 +1,6 @@
 """
-Programa principal - Demostración de los patrones Factory Method, Decorator, Strategy, Composite e Iterator.
+Programa principal - Demostración de los patrones Factory Method, Decorator,
+Strategy, Composite, Iterator y Template Method.
 """
 from juego import Juego
 from orientacion import Norte, Sur, Este, Oeste
@@ -94,6 +95,23 @@ def main():
     print("\nCambiando modo a Perezoso...")
     bicho.establecer_modo(Perezoso())
     print(f"{bicho}")
+    bicho.actuar()
+
+    # --- Patrón Template Method ---
+    print("\n" + "=" * 60)
+    print("7b. Demostración del Patrón Template Method (GoF):")
+    print("=" * 60)
+
+    print("\nModo.actua() es el Template Method que llama:")
+    print("  1. ataca(bicho)  - redefinido en Agresivo")
+    print("  2. duerme(bicho) - redefinido en Perezoso")
+
+    print("\nBicho en modo Agresivo (ataca redefinido, duerme hook):")
+    bicho.establecer_modo(Agresivo())
+    bicho.actuar()
+
+    print("\nBicho en modo Perezoso (ataca hook, duerme redefinido):")
+    bicho.establecer_modo(Perezoso())
     bicho.actuar()
 
     print("\n" + "=" * 60)

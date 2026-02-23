@@ -33,8 +33,12 @@ class Bicho:
         self.modo = modo
 
     def actuar(self):
-        """Delega la acción al modo actual (Strategy)."""
-        self.modo.ejecutar(self)
+        """
+        Delega la acción al modo actual (Strategy).
+        El método actua() del Modo es un Template Method que llama
+        a ataca() y duerme() según la subclase concreta.
+        """
+        self.modo.actua(self)
 
     def __str__(self):
         return f"Bicho({self.nombre}, modo={self.modo})"

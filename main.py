@@ -1,6 +1,6 @@
 """
 Programa principal - Demostración de los patrones Factory Method, Decorator,
-Strategy, Composite, Iterator, Template Method y Abstract Factory.
+Strategy, Composite, Iterator, Template Method, Abstract Factory y Singleton.
 """
 from juego import Juego
 from orientacion import Norte, Sur, Este, Oeste
@@ -143,6 +143,25 @@ def main():
 
     print("\n" + "=" * 60)
     print("Fin de la demostración completa")
+    print("=" * 60)
+
+    # --- Patrón Singleton ---
+    print("\n" + "=" * 60)
+    print("9. Demostración del Patrón Singleton (Norte):")
+    print("=" * 60)
+
+    n1 = Norte()
+    n2 = Norte()
+    n3 = Norte()
+    print(f"\nn1 = Norte(): {n1}  id={id(n1)}")
+    print(f"n2 = Norte(): {n2}  id={id(n2)}")
+    print(f"n3 = Norte(): {n3}  id={id(n3)}")
+    print(f"\nn1 is n2: {n1 is n2}")
+    print(f"n2 is n3: {n2 is n3}")
+    print(f"Norte.unicaInstancia is n1: {Norte.unicaInstancia is n1}")
+
+    print("\n" + "=" * 60)
+    print("Fin de la demostración")
     print("=" * 60)
 
 

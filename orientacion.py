@@ -21,7 +21,17 @@ class Orientacion(ABC):
 
 
 class Norte(Orientacion):
-    """Estrategia concreta: orientación Norte."""
+    """
+    Estrategia concreta: orientación Norte.
+    Implementa el patrón Singleton: solo existe una instancia de Norte.
+    """
+
+    unicaInstancia = None
+
+    def __new__(cls):
+        if cls.unicaInstancia is None:
+            cls.unicaInstancia = super().__new__(cls)
+        return cls.unicaInstancia
 
     def obtener_nombre(self):
         return "Norte"

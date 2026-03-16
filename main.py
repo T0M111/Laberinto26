@@ -1,6 +1,6 @@
 """
 Programa principal - Demostración de los patrones Factory Method, Decorator,
-Strategy, Composite, Iterator, Template Method, Abstract Factory y Singleton.
+Strategy, Composite, Iterator, Template Method, Abstract Factory, Singleton y Builder.
 """
 from juego import Juego
 from orientacion import Norte, Sur, Este, Oeste
@@ -8,6 +8,8 @@ from bicho import Bicho
 from modo import Agresivo, Perezoso
 from laberinto_bombas_factory import LaberintoBombasFactory
 from laberinto_fuego_factory import LaberintoFuegoFactory
+from laberinto_builder import LaberintoBuilder
+from director import Director
 
 
 def main():
@@ -159,6 +161,21 @@ def main():
     print(f"\nn1 is n2: {n1 is n2}")
     print(f"n2 is n3: {n2 is n3}")
     print(f"Norte.unicaInstancia is n1: {Norte.unicaInstancia is n1}")
+
+    # --- Patrón Builder ---
+    print("\n" + "=" * 60)
+    print("10. Demostración del Patrón Builder:")
+    print("=" * 60)
+
+    builder = LaberintoBuilder()
+    director = Director(builder)
+    laberinto_builder = director.procesar()
+
+    print(f"\nLaberinto construido por Director+LaberintoBuilder: {laberinto_builder}")
+    for numero, habitacion in laberinto_builder.habitaciones.items():
+        print(f"\n   {habitacion}")
+        for orientacion, elemento in habitacion.orientaciones.items():
+            print(f"      - {orientacion}: {elemento}")
 
     print("\n" + "=" * 60)
     print("Fin de la demostración")

@@ -59,6 +59,9 @@ jobs:
             import laberinto_bombas_factory
             import laberinto_fuego_factory
             import orientacion
+            import builder
+            import laberinto_builder
+            import director
             print('✓ Todas las importaciones exitosas')
         except ImportError as e:
             print(f'✗ Error de importación: {e}')

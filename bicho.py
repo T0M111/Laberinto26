@@ -40,5 +40,13 @@ class Bicho:
         """
         self.modo.actua(self)
 
+    def cambiarModo(self):
+        """
+        Adaptee del patrón Adapter.
+        Delega el cambio de modo en el propio objeto Modo actual
+        (doble despacho): cada subclase de Modo sabe a qué modo transicionar.
+        """
+        self.modo.cambiarModo(self)
+
     def __str__(self):
         return f"Bicho({self.nombre}, modo={self.modo})"

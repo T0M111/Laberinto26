@@ -137,6 +137,15 @@ git pull origin main
     - `laberinto_builder.py`: `LaberintoBuilder(Builder)` — builder concreto que ensambla un `Laberinto` con dos habitaciones conectadas por una puerta
     - `director.py`: `Director` — almacena un `Builder` en `self.builder` y su método `procesar()` delega en `builder.fabricarLaberinto()`
 
+- ✅ **Adapter** (v1.0.0) - Implementado
+  - Rama: `feature/adapter`
+  - Cambios:
+    - `varita.py`: Clase abstracta `Varita` (Target) con método abstracto `cambiarModo()`
+    - `bicho_adapter.py`: `BichoAdapter(Varita)` — Adapter concreto que envuelve un `Bicho` (adaptee) y delega `cambiarModo()` en `bicho.cambiarModo()`
+    - `personaje.py`: `Personaje` — Cliente que solo conoce la interfaz `Varita`; invoca `varita.cambiarModo()` para cambiar el modo del bicho sin referenciarlo directamente
+    - `bicho.py`: Añadido método `cambiarModo()` — delega en `modo.cambiarModo(self)` (doble despacho)
+    - `modo.py`: Añadido método abstracto `cambiarModo(bicho)` en `Modo`; `Agresivo.cambiarModo()` transiciona a `Perezoso`, `Perezoso.cambiarModo()` transiciona a `Agresivo`
+
 ## Versionado
 
 - `v0.1.0` - Factory Method
@@ -148,3 +157,4 @@ git pull origin main
 - `v0.7.0` - Abstract Factory
 - `v0.8.0` - Singleton
 - `v0.9.0` - Builder
+- `v1.0.0` - Adapter

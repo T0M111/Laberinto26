@@ -52,6 +52,17 @@ class Modo(ABC):
         pass
 
     @abstractmethod
+    def cambiarModo(self, bicho):
+        """
+        Patrón Adapter — método del adaptee invocado por Bicho.cambiarModo().
+        Cada subclase transiciona el Bicho al modo contrario.
+
+        Args:
+            bicho: El Bicho cuyo modo se debe cambiar.
+        """
+        pass
+
+    @abstractmethod
     def obtener_nombre(self):
         """Devuelve el nombre del modo."""
         pass
@@ -70,6 +81,10 @@ class Agresivo(Modo):
         """Paso concreto del Template Method: ataque agresivo."""
         print(f"  {bicho} -> ¡Ataca ferozmente!")
 
+    def cambiarModo(self, bicho):
+        """Adapter — cambia el modo del bicho de Agresivo a Perezoso."""
+        bicho.establecer_modo(Perezoso())
+
 
 class Perezoso(Modo):
     """Estrategia concreta: el bicho descansa sin hacer nada."""
@@ -80,3 +95,7 @@ class Perezoso(Modo):
     def duerme(self, bicho):
         """Paso concreto del Template Method: duerme profundamente."""
         print(f"  {bicho} -> Duerme profundamente... zzz")
+
+    def cambiarModo(self, bicho):
+        """Adapter — cambia el modo del bicho de Perezoso a Agresivo."""
+        bicho.establecer_modo(Agresivo())

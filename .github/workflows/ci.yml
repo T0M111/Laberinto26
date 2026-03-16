@@ -62,6 +62,9 @@ jobs:
             import builder
             import laberinto_builder
             import director
+            import varita
+            import bicho_adapter
+            import personaje
             print('✓ Todas las importaciones exitosas')
         except ImportError as e:
             print(f'✗ Error de importación: {e}')
@@ -82,4 +85,38 @@ jobs:
             print('✗ Singleton roto: unicaInstancia no coincide')
             sys.exit(1)
         print('✓ Singleton Norte verificado correctamente')
+        "
+
+    - name: Verificar Adapter BichoAdapter
+      run: |
+        python -c "
+        import sys
+        from bicho import Bicho
+        from modo import Agresivo, Perezoso
+        from bicho_adapter import BichoAdapter
+        from personaje import Personaje
+        from varita import Varita
+
+        # BichoAdapter debe ser subclase de Varita
+        if not issubclass(BichoAdapter, Varita):
+            print('✗ BichoAdapter no extiende Varita')
+            sys.exit(1)
+
+        bicho = Bicho('Test', Agresivo())
+        adapter = BichoAdapter(bicho)
+        mago = Personaje('Mago', adapter)
+
+        # Agresivo -> Perezoso
+        mago.pedir_cambio_modo()
+        if not isinstance(bicho.modo, Perezoso):
+            print('✗ Adapter: modo debería ser Perezoso tras primer cambio')
+            sys.exit(1)
+
+        # Perezoso -> Agresivo
+        mago.pedir_cambio_modo()
+        if not isinstance(bicho.modo, Agresivo):
+            print('✗ Adapter: modo debería ser Agresivo tras segundo cambio')
+            sys.exit(1)
+
+        print('✓ Adapter BichoAdapter verificado correctamente')
         "

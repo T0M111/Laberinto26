@@ -1,6 +1,7 @@
 """
 Programa principal - Demostración de los patrones Factory Method, Decorator,
-Strategy, Composite, Iterator, Template Method, Abstract Factory, Singleton y Builder.
+Strategy, Composite, Iterator, Template Method, Abstract Factory, Singleton,
+Builder y Adapter.
 """
 from juego import Juego
 from orientacion import Norte, Sur, Este, Oeste
@@ -10,6 +11,8 @@ from laberinto_bombas_factory import LaberintoBombasFactory
 from laberinto_fuego_factory import LaberintoFuegoFactory
 from laberinto_builder import LaberintoBuilder
 from director import Director
+from bicho_adapter import BichoAdapter
+from personaje import Personaje
 
 
 def main():
@@ -179,6 +182,35 @@ def main():
 
     print("\n" + "=" * 60)
     print("Fin de la demostración")
+    print("=" * 60)
+
+    # --- Patrón Adapter ---
+    print("\n" + "=" * 60)
+    print("11. Demostración del Patrón Adapter (BichoAdapter):")
+    print("=" * 60)
+
+    bicho_adaptar = Bicho("Dragon", Agresivo())
+    print(f"\nBicho original: {bicho_adaptar}")
+
+    adapter = BichoAdapter(bicho_adaptar)
+    mago = Personaje("Mago", adapter)
+
+    print(f"\nPersonaje '{mago.nombre}' usa BichoAdapter como Varita.")
+    print(f"Estado inicial del Bicho: {bicho_adaptar}")
+
+    print("\nRonda 1: Personaje pide cambiar modo (Agresivo -> Perezoso):")
+    mago.pedir_cambio_modo()
+    print(f"  Estado tras cambio: {bicho_adaptar}")
+
+    print("\nRonda 2: Personaje pide cambiar modo (Perezoso -> Agresivo):")
+    mago.pedir_cambio_modo()
+    print(f"  Estado tras cambio: {bicho_adaptar}")
+
+    print("\nEl Personaje solo interactúa con la interfaz Varita (cambiarModo).")
+    print("BichoAdapter traduce esa llamada a Bicho.cambiarModo() -> Modo.cambiarModo().")
+
+    print("\n" + "=" * 60)
+    print("Fin de la demostración del Adapter")
     print("=" * 60)
 
 

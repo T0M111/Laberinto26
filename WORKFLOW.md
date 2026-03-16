@@ -125,6 +125,11 @@ git pull origin main
     - `laberinto_fuego_factory.py`: `LaberintoFuegoFactory(LaberintoFactory)` — factoría que produce `ParedFuego` + `PuertaFuego`
     - `juego.py`: `crear_laberinto(factory=None)` acepta una `LaberintoFactory` opcional; si se pasa, delega la creación de paredes/puertas en ella
 
+- ✅ **Singleton** (v0.8.0) - Implementado
+  - Rama: `feature/singleton`
+  - Cambios:
+    - `orientacion.py`: `Norte` implementa el patrón Singleton mediante `__new__`; el atributo de clase `unicaInstancia` almacena la única instancia y cualquier llamada a `Norte()` la devuelve en lugar de crear una nueva
+
 ## Versionado
 
 - `v0.1.0` - Factory Method
@@ -134,3 +139,4 @@ git pull origin main
 - `v0.5.0` - Iterator
 - `v0.6.0` - Template Method
 - `v0.7.0` - Abstract Factory
+- `v0.8.0` - Singleton

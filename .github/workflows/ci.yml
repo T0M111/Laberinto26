@@ -58,8 +58,25 @@ jobs:
             import puerta_fuego
             import laberinto_bombas_factory
             import laberinto_fuego_factory
+            import orientacion
             print('✓ Todas las importaciones exitosas')
         except ImportError as e:
             print(f'✗ Error de importación: {e}')
             sys.exit(1)
+        "
+
+    - name: Verificar Singleton Norte
+      run: |
+        python -c "
+        import sys
+        from orientacion import Norte
+        n1 = Norte()
+        n2 = Norte()
+        if n1 is not n2:
+            print('✗ Singleton roto: Norte() devuelve instancias distintas')
+            sys.exit(1)
+        if Norte.unicaInstancia is not n1:
+            print('✗ Singleton roto: unicaInstancia no coincide')
+            sys.exit(1)
+        print('✓ Singleton Norte verificado correctamente')
         "

@@ -130,6 +130,13 @@ git pull origin main
   - Cambios:
     - `orientacion.py`: `Norte` implementa el patrón Singleton mediante `__new__`; el atributo de clase `unicaInstancia` almacena la única instancia y cualquier llamada a `Norte()` la devuelve en lugar de crear una nueva
 
+- ✅ **Builder** (v0.9.0) - Implementado
+  - Rama: `feature/builder`
+  - Cambios:
+    - `builder.py`: Clase abstracta `Builder` (ABC) con método abstracto `fabricarLaberinto()`
+    - `laberinto_builder.py`: `LaberintoBuilder(Builder)` — builder concreto que ensambla un `Laberinto` con dos habitaciones conectadas por una puerta
+    - `director.py`: `Director` — almacena un `Builder` en `self.builder` y su método `procesar()` delega en `builder.fabricarLaberinto()`
+
 ## Versionado
 
 - `v0.1.0` - Factory Method
@@ -140,3 +147,4 @@ git pull origin main
 - `v0.6.0` - Template Method
 - `v0.7.0` - Abstract Factory
 - `v0.8.0` - Singleton
+- `v0.9.0` - Builder

@@ -1,11 +1,13 @@
 """
 Programa principal - Demostración de los patrones Factory Method, Decorator,
-Strategy, Composite, Iterator y Template Method.
+Strategy, Composite, Iterator, Template Method y Abstract Factory.
 """
 from juego import Juego
 from orientacion import Norte, Sur, Este, Oeste
 from bicho import Bicho
 from modo import Agresivo, Perezoso
+from laberinto_bombas_factory import LaberintoBombasFactory
+from laberinto_fuego_factory import LaberintoFuegoFactory
 
 
 def main():
@@ -116,6 +118,31 @@ def main():
 
     print("\n" + "=" * 60)
     print("Fin de la demostración")
+    print("=" * 60)
+
+    # --- Patrón Abstract Factory ---
+    print("\n" + "=" * 60)
+    print("8. Demostración del Patrón Abstract Factory:")
+    print("=" * 60)
+
+    juego = Juego()
+
+    print("\n8a. Laberinto con LaberintoBombasFactory:")
+    laberinto_bombas = juego.crear_laberinto(LaberintoBombasFactory())
+    for numero, habitacion in laberinto_bombas.habitaciones.items():
+        print(f"\n   {habitacion}")
+        for orientacion, elemento in habitacion.orientaciones.items():
+            print(f"      - {orientacion}: {elemento}")
+
+    print("\n8b. Laberinto con LaberintoFuegoFactory:")
+    laberinto_fuego = juego.crear_laberinto(LaberintoFuegoFactory())
+    for numero, habitacion in laberinto_fuego.habitaciones.items():
+        print(f"\n   {habitacion}")
+        for orientacion, elemento in habitacion.orientaciones.items():
+            print(f"      - {orientacion}: {elemento}")
+
+    print("\n" + "=" * 60)
+    print("Fin de la demostración completa")
     print("=" * 60)
 
 

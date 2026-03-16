@@ -113,9 +113,24 @@ git pull origin main
 
 ## Versionado
 
+- ✅ **Abstract Factory** (v0.7.0) - Implementado
+  - Rama: `feature/abstract-factory`
+  - Cambios:
+    - `laberinto_factory.py`: Clase abstracta `LaberintoFactory` (ABC) con `fabricar_pared()` y `fabricar_puerta()` abstractos
+    - `pared_bomba.py`: `ParedBomba(Pared)` — producto concreto de pared con bomba
+    - `pared_fuego.py`: `ParedFuego(Pared)` — producto concreto de pared de fuego
+    - `puerta_bomba.py`: `PuertaBomba(Puerta)` — producto concreto de puerta con bomba
+    - `puerta_fuego.py`: `PuertaFuego(Puerta)` — producto concreto de puerta de fuego
+    - `laberinto_bombas_factory.py`: `LaberintoBombasFactory(LaberintoFactory)` — factoría que produce `ParedBomba` + `PuertaBomba`
+    - `laberinto_fuego_factory.py`: `LaberintoFuegoFactory(LaberintoFactory)` — factoría que produce `ParedFuego` + `PuertaFuego`
+    - `juego.py`: `crear_laberinto(factory=None)` acepta una `LaberintoFactory` opcional; si se pasa, delega la creación de paredes/puertas en ella
+
+## Versionado
+
 - `v0.1.0` - Factory Method
 - `v0.2.0` - Decorator
 - `v0.3.0` - Strategy
 - `v0.4.0` - Composite
 - `v0.5.0` - Iterator
 - `v0.6.0` - Template Method
+- `v0.7.0` - Abstract Factory

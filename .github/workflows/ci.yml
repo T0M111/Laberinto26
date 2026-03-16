@@ -51,6 +51,13 @@ jobs:
             import decorator
             import bomba
             import hechizo
+            import laberinto_factory
+            import pared_bomba
+            import pared_fuego
+            import puerta_bomba
+            import puerta_fuego
+            import laberinto_bombas_factory
+            import laberinto_fuego_factory
             print('✓ Todas las importaciones exitosas')
         except ImportError as e:
             print(f'✗ Error de importación: {e}')

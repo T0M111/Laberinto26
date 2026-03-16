@@ -1,5 +1,5 @@
 """
-Clase Juego - Implementa el patrón Factory Method.
+Clase Juego - Implementa los patrones Factory Method y Abstract Factory.
 Usa el patrón Strategy (Orientacion) para los lados de las habitaciones.
 """
 from pared import Pared
@@ -7,6 +7,7 @@ from puerta import Puerta
 from habitacion import Habitacion
 from laberinto import Laberinto
 from orientacion import Norte, Sur, Este, Oeste
+from laberinto_factory import LaberintoFactory
 
 
 class Juego:
@@ -57,14 +58,25 @@ class Juego:
         """
         return Laberinto()
     
-    def crear_laberinto(self):
+    def crear_laberinto(self, factory: LaberintoFactory = None):
         """
-        Método que utiliza los Factory Methods para construir un laberinto completo.
-        Este es un ejemplo de cómo usar los factory methods.
-        
+        Crea un laberinto completo usando los Factory Methods propios
+        o, si se proporciona una factoría (Abstract Factory), delega en ella
+        la creación de Pared y Puerta.
+
+        Args:
+            factory: Instancia de LaberintoFactory (Abstract Factory).
+                     Si es None se usan los Factory Methods de la propia clase.
+
         Returns:
             Un laberinto configurado con dos habitaciones conectadas por una puerta.
         """
+        def _pared():
+            return factory.fabricar_pared() if factory else self.fabricar_pared()
+
+        def _puerta():
+            return factory.fabricar_puerta() if factory else self.fabricar_puerta()
+
         # Crear el laberinto
         laberinto = self.fabricar_laberinto()
         
@@ -73,18 +85,18 @@ class Juego:
         h2 = self.fabricar_habitacion(2)
         
         # Crear elementos para las habitaciones
-        puerta = self.fabricar_puerta()
+        puerta = _puerta()
         
         # Configurar la habitación 1
-        h1.establecer_lado(Norte(), self.fabricar_pared())
+        h1.establecer_lado(Norte(), _pared())
         h1.establecer_lado(Este(), puerta)
-        h1.establecer_lado(Sur(), self.fabricar_pared())
-        h1.establecer_lado(Oeste(), self.fabricar_pared())
+        h1.establecer_lado(Sur(), _pared())
+        h1.establecer_lado(Oeste(), _pared())
         
         # Configurar la habitación 2
-        h2.establecer_lado(Norte(), self.fabricar_pared())
-        h2.establecer_lado(Este(), self.fabricar_pared())
-        h2.establecer_lado(Sur(), self.fabricar_pared())
+        h2.establecer_lado(Norte(), _pared())
+        h2.establecer_lado(Este(), _pared())
+        h2.establecer_lado(Sur(), _pared())
         h2.establecer_lado(Oeste(), puerta)
         
         # Agregar habitaciones al laberinto

@@ -146,6 +146,18 @@ git pull origin main
     - `bicho.py`: Añadido método `cambiarModo()` — delega en `modo.cambiarModo(self)` (doble despacho)
     - `modo.py`: Añadido método abstracto `cambiarModo(bicho)` en `Modo`; `Agresivo.cambiarModo()` transiciona a `Perezoso`, `Perezoso.cambiarModo()` transiciona a `Agresivo`
 
+- ✅ **Navegación del Laberinto** (v1.1.0) - Implementado
+  - Rama: `feature/navegacion`
+  - Cambios:
+    - `elemento_mapa.py`: Añadidos hooks `entrar(alguien)` (bloqueado por defecto) y `caminar(alguien)` (delega en `entrar`) sobre los que cada subclase hace polimorfismo
+    - `contenedor.py`: `Contenedor.entrar(alguien)` — imprime posición y asigna `alguien.posicion = self`
+    - `habitacion.py`: `Habitacion.obtener_orientacion_aleatoria()` — devuelve un `ElementoMapa` aleatorio de `orientaciones.values()` (equivalente a `detect:` de Smalltalk)
+    - `puerta.py`: Añadidos atributos `lado1` y `lado2`; `Puerta.entrar(alguien)` — si abierta, mueve al bicho al lado contrario; si cerrada, imprime mensaje
+    - `bicho.py`: Añadido atributo `posicion = None`
+    - `modo.py`: `Modo.camina(bicho)` — obtiene elemento aleatorio de la posición del bicho y llama `elemento.caminar(bicho)`
+    - `juego.py`: Añadido `__init__` con `self.laberinto = None`; `crear_laberinto()` asigna `puerta.lado1/lado2` y almacena el laberinto en `self.laberinto`; nuevo método `obtener_habitacion(num)` que delega en `self.laberinto.obtener_habitacion(num)`
+    - `laberinto.py`: `obtener_habitacion(num)` ahora itera `_hijos` con `next(filter(...), None)` (fiel al `detect:ifNone:` del profesor)
+
 ## Versionado
 
 - `v0.1.0` - Factory Method
@@ -158,3 +170,4 @@ git pull origin main
 - `v0.8.0` - Singleton
 - `v0.9.0` - Builder
 - `v1.0.0` - Adapter
+- `v1.1.0` - Navegación del Laberinto

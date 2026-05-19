@@ -51,6 +51,22 @@ class ElementoMapa(ABC):
         """
         return self.recorrer()
 
+    def entrar(self, alguien):
+        """
+        Hook de navegación: comportamiento al intentar entrar en este elemento.
+        Por defecto imprime un mensaje de bloqueo (Pared).
+        Sobreescrito en Contenedor y Puerta.
+        """
+        print(f"  ¡{alguien} no puede entrar en {self}!")
+
+    def caminar(self, alguien):
+        """
+        Hook de navegación: el bicho se desplaza hacia este elemento.
+        Por defecto delega en entrar(), lo que bloquea en Pared y
+        mueve en Contenedor/Puerta gracias al polimorfismo.
+        """
+        self.entrar(alguien)
+
     @abstractmethod
     def __str__(self):
         """Representación en string del elemento."""

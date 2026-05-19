@@ -22,6 +22,7 @@ class Bicho:
         """
         self.nombre = nombre
         self.modo = modo
+        self.posicion = None  # Habitacion donde se encuentra actualmente
 
     def establecer_modo(self, modo: Modo):
         """

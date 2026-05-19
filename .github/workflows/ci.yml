@@ -120,3 +120,48 @@ jobs:
 
         print('✓ Adapter BichoAdapter verificado correctamente')
         "
+
+    - name: Verificar Navegación del laberinto
+      run: |
+        python -c "
+        import sys
+        from juego import Juego
+        from bicho import Bicho
+        from modo import Agresivo
+        from orientacion import Este
+
+        juego = Juego()
+        lab = juego.crear_laberinto()
+
+        # obtener_habitacion via Composite hijos
+        h1 = juego.obtener_habitacion(1)
+        h2 = juego.obtener_habitacion(2)
+        if h1 is None or h2 is None:
+            print('✗ obtener_habitacion fallo')
+            sys.exit(1)
+
+        # Puerta debe tener lados asignados
+        puerta = h1.obtener_lado(Este())
+        if puerta.lado1 is not h1 or puerta.lado2 is not h2:
+            print('✗ Puerta.lado1/lado2 no asignados correctamente')
+            sys.exit(1)
+
+        # entrar coloca el bicho en la habitacion
+        bicho = Bicho('Test', Agresivo())
+        h1.entrar(bicho)
+        if bicho.posicion is not h1:
+            print('✗ Contenedor.entrar no asigna posicion')
+            sys.exit(1)
+
+        # Puerta abierta: entrar mueve al otro lado
+        puerta.abrir()
+        puerta.entrar(bicho)
+        if bicho.posicion is not h2:
+            print('✗ Puerta.entrar no mueve al otro lado')
+            sys.exit(1)
+
+        # camina no lanza excepcion
+        bicho.modo.camina(bicho)
+
+        print('✓ Navegación del laberinto verificada correctamente')
+        "

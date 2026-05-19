@@ -2,6 +2,7 @@
 Clase Habitacion - Contenedor concreto del mapa (Composite).
 Utiliza el patrón Strategy mediante objetos Orientacion.
 """
+import random
 from contenedor import Contenedor
 from orientacion import Orientacion
 
@@ -52,6 +53,15 @@ class Habitacion(Contenedor):
             El elemento en ese lado o None si no existe.
         """
         return self.orientaciones.get(str(orientacion))
+
+    def obtener_orientacion_aleatoria(self):
+        """
+        Devuelve un ElementoMapa aleatorio de entre los lados de la habitación.
+        Usado por Modo.camina() para que el bicho intente moverse en una
+        dirección aleatoria.
+        """
+        valores = list(self.orientaciones.values())
+        return valores[random.randint(0, len(valores) - 1)]
 
     def __str__(self):
         """Representación en string de la habitación."""

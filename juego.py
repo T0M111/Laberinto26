@@ -18,7 +18,25 @@ class Juego:
     (Pared, Puerta, Habitacion, Laberinto) permitiendo que subclases puedan
     sobrescribir estos métodos para crear variantes de los elementos.
     """
+
+    def __init__(self):
+        """Inicializa el Juego sin laberinto activo."""
+        self.laberinto = None
     
+    def obtener_habitacion(self, numero):
+        """
+        Delega en el laberinto activo la búsqueda de una habitación por número.
+
+        Args:
+            numero: Número de la habitación.
+
+        Returns:
+            La Habitacion correspondiente, o None si no existe o no hay laberinto.
+        """
+        if self.laberinto is None:
+            return None
+        return self.laberinto.obtener_habitacion(numero)
+
     def fabricar_pared(self):
         """
         Factory Method para crear una Pared.
@@ -98,9 +116,14 @@ class Juego:
         h2.establecer_lado(Este(), _pared())
         h2.establecer_lado(Sur(), _pared())
         h2.establecer_lado(Oeste(), puerta)
-        
+
+        # Establecer los lados de la puerta
+        puerta.lado1 = h1
+        puerta.lado2 = h2
+
         # Agregar habitaciones al laberinto
         laberinto.agregar_habitacion(h1)
         laberinto.agregar_habitacion(h2)
-        
+
+        self.laberinto = laberinto
         return laberinto

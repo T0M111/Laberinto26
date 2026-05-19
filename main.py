@@ -1,7 +1,7 @@
 """
 Programa principal - Demostración de los patrones Factory Method, Decorator,
 Strategy, Composite, Iterator, Template Method, Abstract Factory, Singleton,
-Builder y Adapter.
+Builder, Adapter y Navegación del laberinto.
 """
 from juego import Juego
 from orientacion import Norte, Sur, Este, Oeste
@@ -211,6 +211,38 @@ def main():
 
     print("\n" + "=" * 60)
     print("Fin de la demostración del Adapter")
+    print("=" * 60)
+
+    # --- Navegación del laberinto ---
+    print("\n" + "=" * 60)
+    print("12. Navegación del laberinto (entrar / camina):")
+    print("=" * 60)
+
+    juego_nav = Juego()
+    lab = juego_nav.crear_laberinto()
+
+    bicho_nav = Bicho("Orco", Agresivo())
+
+    # Colocar el bicho en la habitacion 1
+    h1_nav = juego_nav.obtener_habitacion(1)
+    h2_nav = juego_nav.obtener_habitacion(2)
+    h1_nav.entrar(bicho_nav)
+    print(f"  Posicion inicial: {bicho_nav.posicion}")
+
+    print("\n  Intento de movimiento aleatorio con puerta cerrada:")
+    bicho_nav.modo.camina(bicho_nav)
+    print(f"  Posicion: {bicho_nav.posicion}")
+
+    # Abrir la puerta entre h1 y h2
+    puerta_nav = h1_nav.obtener_lado(Este())
+    puerta_nav.abrir()
+    print("\n  Puerta Este abierta. Movimientos aleatorios:")
+    for i in range(4):
+        bicho_nav.modo.camina(bicho_nav)
+        print(f"  Posicion: {bicho_nav.posicion}")
+
+    print("\n" + "=" * 60)
+    print("Fin de la demostración de Navegación")
     print("=" * 60)
 
 

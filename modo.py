@@ -18,6 +18,16 @@ class Modo(ABC):
       métodos primitivos ataca() y duerme(), que cada subclase redefine.
     """
 
+    # --- Navegación ---
+
+    def camina(self, bicho):
+        """
+        El bicho se mueve en una dirección aleatoria dentro de su posicion actual.
+        Obtiene un ElementoMapa aleatorio de la habitacion y llama a caminar().
+        """
+        elemento = bicho.posicion.obtener_orientacion_aleatoria()
+        elemento.caminar(bicho)
+
     # --- Template Method ---
 
     def actua(self, bicho):

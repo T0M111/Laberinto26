@@ -29,7 +29,8 @@ class Laberinto(Contenedor):
 
     def obtener_habitacion(self, numero):
         """
-        Obtiene una habitación por su número.
+        Obtiene una habitación por su número recorriendo los hijos Composite
+        (equivalente al detect:ifNone: del profesor en Smalltalk).
 
         Args:
             numero: Número de la habitación.
@@ -37,7 +38,10 @@ class Laberinto(Contenedor):
         Returns:
             La habitación correspondiente o None si no existe.
         """
-        return self.habitaciones.get(numero)
+        return next(
+            (h for h in self._hijos if hasattr(h, 'numero') and h.numero == numero),
+            None
+        )
 
     def __str__(self):
         """Representación en string del laberinto."""

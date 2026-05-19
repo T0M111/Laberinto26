@@ -58,3 +58,11 @@ class Contenedor(ElementoMapa):
         yield self
         for hijo in self._hijos:
             yield from hijo.recorrer()
+
+    def entrar(self, alguien):
+        """
+        El bicho entra en este contenedor (Habitacion/Laberinto).
+        Imprime la posición y actualiza alguien.posicion.
+        """
+        print(f"  {alguien} está en {self}")
+        alguien.posicion = self

@@ -171,3 +171,218 @@ git pull origin main
 - `v0.9.0` - Builder
 - `v1.0.0` - Adapter
 - `v1.1.0` - Navegación del Laberinto
+- `v1.2.0` - Proxy (Tunel)
+- `v1.3.0` - Bridge (Forma / HabitacionCuadrada / HabitacionRombiforme)
+- `v1.4.0` - Mediator (Juego coordina Bicho / Personaje a través de Ente)
+- `v1.5.0` - State (Estado / Vivo / Muerto aplicado al ciclo de vida de Ente)
+- `v1.6.0` - Prototype (LaberintoCuadrado / LaberintoRombiforme; Juego.clonarLaberinto())
+- `v1.7.0` - Observer (Juego como Subject; LaberintoGUI como ConcreteObserver)
+- `v1.8.0` - Command (Abrir / Cerrar sobre Puerta; ElementoMapa con +comandos)
+- `v1.9.0` - Visitor (Visitador ABC; VisitadorContador; +aceptar() en ElementoMapa; nuevo Armario)
+- `v2.0.0` - Flyweight (Moneda ABC; Oro/Plata/SuperMoneda; FactoriaMonedas pool; Laberinto como cliente)
+- `v2.1.0` - Memento (Laberinto como Originator; Memento snapshot; Caretaker custodia +memento)
+- `v2.2.0` - Chain of Responsibility (ElementoMapa +sucesor; Pared pasa; Puerta responde; Juego +handler)
+
+---
+
+## Extensiones de Evaluación
+
+- ✅ **Proxy** (v1.2.0) — extensión Media
+  - Rama: `feature/proxy`
+  - Patrón: Proxy
+  - Roles:
+    - Subject: `ElementoMapa` (interfaz `entrar()`)
+    - RealSubject: `Laberinto`
+    - Proxy: `Tunel`
+  - Nuevos ficheros:
+    - `tunel.py`: `Tunel(Contenedor)` — proxy que teletransporta al ente a la primera habitación del laberinto destino
+    - `laberinto_config.json`: configuración JSON con dos laberintos y un túnel entre ellos
+    - `laberinto_json_builder.py`: `LaberintoJsonBuilder(Builder)` — builder basado en JSON que soporta `pared`, `puerta`, `tunel`
+    - `test_tunel.py`: 13 tests (Tunel + LaberintoJsonBuilder)
+  - `main.py`: añadida `demo_proxy()` (sección 13)
+
+- ✅ **Bridge** (v1.3.0) — extensión Media
+  - Rama: `feature/bridge`
+  - Patrón: Bridge
+  - Roles:
+    - Abstraction: `Contenedor` (recibe `+forma: Forma`)
+    - Refined Abstractions: `HabitacionCuadrada`, `HabitacionRombiforme`
+    - Implementor: `Forma` (abstracta, `+num`, `+orientaciones`)
+    - Concrete Implementors: `Cuadrado` (N/S/E/O), `Rombo` (NE/NO/SE/SO)
+  - Nuevos ficheros:
+    - `forma.py`: `Forma` (ABC), `Cuadrado`, `Rombo`
+    - `habitacion_cuadrada.py`: `HabitacionCuadrada(Habitacion)` — inicializa sus 4 lados cardinales con Pared
+    - `habitacion_rombiforme.py`: `HabitacionRombiforme(Habitacion)` — inicializa sus 4 lados diagonales con Pared
+    - `test_bridge.py`: 24 tests (Forma + HabitacionCuadrada + HabitacionRombiforme + integración JSON)
+  - Ficheros modificados:
+    - `orientacion.py`: añadidas `Noreste`, `Noroeste`, `Sureste`, `Suroeste`
+    - `contenedor.py`: añadido `self.forma = None` en `__init__`
+    - `laberinto_config.json`: habitaciones 1 y 2 son `habitacion_cuadrada`; habitación 3 es `habitacion_rombiforme`
+    - `laberinto_json_builder.py`: soporta `habitacion`, `habitacion_cuadrada`, `habitacion_rombiforme`; soporta orientaciones diagonales
+  - `main.py`: añadida `demo_bridge()` (sección 14)
+
+- ✅ **Mediator** (v1.4.0) — extensión Media
+  - Rama: `feature/mediator`
+  - Patrón: Mediator
+  - Roles:
+    - Mediador: `Juego` — coordina ataques, condiciones de fin de juego y registro de entidades
+    - Colegas: `Bicho` y `Personaje` — se comunican **solo a través de Juego**, nunca entre sí
+    - Colleague Base: `Ente` (abstracta) — encapsula `vidas`, `poder`, `estado` y referencia `_juego`
+    - State: `Estado` (abstracta), `Vivo`, `Muerto` — patrón State para el ciclo de vida del Ente
+  - Nuevos ficheros:
+    - `estado_ente.py`: `Estado` (ABC), `Vivo`, `Muerto` — patrón State (refactorizado en v1.5.0 como patrón independiente)
+    - `ente.py`: `Ente` (ABC) — clase base Colega con `vidas`, `poder`, `estado`, `_juego`, `recibir_danio()`, `esta_vivo()`
+    - `test_mediator.py`: 40 tests (Estado/State + Ente + Bicho/Personaje como Ente + Juego Mediador + fabricar_entidades)
+  - Ficheros modificados:
+    - `bicho.py`: `Bicho(Ente)` — ahora hereda de `Ente`; constructor backwards-compatible `(nombre, modo, vidas=3, poder=1)`
+    - `personaje.py`: `Personaje(Ente)` — ahora hereda de `Ente`; `varita` ahora opcional; `(nombre, varita=None, vidas=5, poder=2)`
+    - `juego.py`: añadidos `self.personaje`, `self.bichos`; métodos Mediador: `registrar_personaje()`, `registrar_bicho()`, `notificar_ataque()`, `turno_bicho()`, `turno_personaje()`, `verificar_fin_juego()`
+    - `laberinto_config.json`: añadida sección `"entidades"` con Heroe, Goblin y Troll
+    - `laberinto_json_builder.py`: añadido método `fabricar_entidades(juego)` que lee la sección JSON y registra las entidades en el Juego
+  - `main.py`: añadida `demo_mediator()` (sección 15)
+
+- ✅ **State** (v1.5.0) — extensión Básica
+  - Rama: `feature/state`
+  - Patrón: State
+  - Roles:
+    - Context        : `Ente` — tiene `+estado: Estado` y delega `actuar()` en `estado.puedeActuar()`
+    - State          : `Estado` (ABC) — define `puedeActuar() -> bool`
+    - ConcreteState A: `Vivo` — `puedeActuar()` devuelve `True`
+    - ConcreteState B: `Muerto` — `puedeActuar()` devuelve `False`
+  - Ficheros modificados:
+    - `estado_ente.py`: renombrado `EstadoEnte` → `Estado`; renombrado `esta_vivo()` → `puedeActuar()`
+    - `ente.py`: importa `Estado`; `actuar()` delega en `self.estado.puedeActuar()`; `esta_vivo()` como alias de conveniencia
+    - `bicho.py`: `actuar()` llama `super().actuar()` como guardia State antes de ejecutar Strategy (retorna el bool)
+  - Nuevos ficheros:
+    - `test_state.py`: 19 tests (TestEstado + TestEnteComoContextoState + TestBichoConStateguard)
+
+- ✅ **Prototype** (v1.6.0) — extensión Básica
+  - Rama: `feature/prototype`
+  - Patrón: Prototype
+  - Roles:
+    - Prototype          : `Laberinto` — define `clone()` usando `copy.deepcopy`
+    - ConcretePrototype A: `LaberintoCuadrado` — sobrescribe `clone()`, devuelve `LaberintoCuadrado`
+    - ConcretePrototype B: `LaberintoRombiforme` — sobrescribe `clone()`, devuelve `LaberintoRombiforme`
+    - Client             : `Juego.clonarLaberinto()` — delega en `self.laberinto.clone()`
+  - Nuevos ficheros:
+    - `laberinto_cuadrado.py`: `LaberintoCuadrado(Laberinto)` con `clone()` y `__str__`
+    - `laberinto_rombiforme.py`: `LaberintoRombiforme(Laberinto)` con `clone()` y `__str__`
+    - `test_prototype.py`: 23 tests (TestLaberintoClone + TestLaberintoCuadradoClone + TestLaberintoRombiformeClone + TestJuegoComoClientePrototype + TestJsonBuilderCreaLaberintosTipados)
+  - Ficheros modificados:
+    - `laberinto.py`: añadido `clone()` (Prototype) e importado `copy`
+    - `juego.py`: añadido `clonarLaberinto()` como método cliente del Prototype
+    - `laberinto_config.json`: añadido campo `"tipo"` en cada laberinto (`laberinto_cuadrado` / `laberinto_rombiforme`)
+    - `laberinto_json_builder.py`: importa `LaberintoCuadrado`/`LaberintoRombiforme`; tabla `_TIPOS_LABERINTO`; primera pasada usa el tipo correcto
+  - `main.py`: añadida `demo_prototype()` (sección 16)
+
+- ✅ **Observer** (v1.7.0) — extensión Media
+  - Rama: `feature/observer`
+  - Patrón: Observer (variante Pull — el ConcreteObserver recibe el Subject y extrae lo que necesita)
+  - Roles:
+    - Subject            : `Juego` — mantiene `_observadores: list`; métodos `suscribir()`, `desuscribir()`, `notificar()`
+    - Observer           : `Observador` (ABC) — define `actualizar(juego) -> None`
+    - ConcreteObserver   : `LaberintoGUI` — referencia de vuelta `+juego`; `actualizar()` actualiza `self.juego` y llama `_mostrar_estado()`
+  - Nuevos ficheros:
+    - `observador.py`: `Observador(ABC)` con método abstracto `actualizar(self, juego) -> None`
+    - `laberinto_gui.py`: `LaberintoGUI(Observador)` — muestra vidas/estado del Personaje y los Bichos, e indica resultado (Victoria / Derrota / en curso)
+    - `test_observer.py`: 21 tests (TestObservadorAbstracto + TestJuegoSubject + TestLaberintoGUI)
+  - Ficheros modificados:
+    - `juego.py`: añadido `self._observadores = []` en `__init__`; métodos `suscribir()`, `desuscribir()`, `notificar()`; `notificar_ataque()` llama `self.notificar()` automáticamente al final de cada ataque
+  - `main.py`: añadida `demo_observer()` (sección 17)
+
+- ✅ **Command** (v1.8.0) — extensión Media
+  - Rama: `feature/command`
+  - Patrón: Command
+  - Roles:
+    - Command            : `Comando` (ABC) — `+receptor`; método abstracto `ejecutar()`
+    - ConcreteCommand A  : `Abrir` — `ejecutar()` llama `receptor.abrir()`
+    - ConcreteCommand B  : `Cerrar` — `ejecutar()` llama `receptor.cerrar()`
+    - Receiver           : `Puerta` — posee los métodos `abrir()` y `cerrar()`
+    - Invoker/Client     : `ElementoMapa` — lista `+comandos` (0..*); `Puerta` se auto-registra con Abrir y Cerrar
+  - Nuevos ficheros:
+    - `comando.py`: `Comando(ABC)` con `self.receptor` y método abstracto `ejecutar() -> None`
+    - `abrir.py`: `Abrir(Comando)` — ConcreteCommand que abre la puerta
+    - `cerrar.py`: `Cerrar(Comando)` — ConcreteCommand que cierra la puerta
+    - `test_command.py`: 23 tests (TestComandoAbstracto + TestAbrir + TestCerrar + TestElementoMapaComandos + TestPuertaConComandos)
+  - Ficheros modificados:
+    - `elemento_mapa.py`: añadido `self.comandos = []` en `__init__`
+    - `puerta.py`: importa `Abrir` y `Cerrar`; `__init__` inicializa `self.comandos = [Abrir(self), Cerrar(self)]`
+  - `main.py`: añadida `demo_command()` (sección 18)
+
+- ✅ **Visitor** (v1.9.0) — extensión Avanzada
+  - Rama: `feature/visitor`
+  - Patrón: Visitor (doble despacho: cada ElementoMapa llama al método visit correspondiente)
+  - Roles:
+    - Visitor            : `Visitador` (ABC) — define `visitarHabitacion()`, `visitarPuerta()`, `visitarPared()`
+    - ConcreteVisitor    : `VisitadorContador` — cuenta elementos por tipo (habitaciones / puertas / paredes)
+    - Element (abstract) : `ElementoMapa` — nuevo método abstracto `+aceptar(Visitor)`
+    - ConcreteElement    : `Habitacion` — `aceptar()` llama `visitarHabitacion(self)` y propaga a los hijos
+    - ConcreteElement    : `Puerta` — `aceptar()` llama `visitarPuerta(self)` (doble despacho)
+    - ConcreteElement    : `Pared` — `aceptar()` llama `visitarPared(self)` (doble despacho)
+    - Container base     : `Contenedor` — `aceptar()` generico: itera hijos (usado por Laberinto, Tunel, Armario)
+    - Nuevo Contenedor   : `Armario` — `aceptar()` propaga a hijos sin llamar a visitarArmario (según diagrama UML)
+  - Nuevos ficheros:
+    - `visitador.py`: `Visitador(ABC)` con los tres métodos abstractos de visita
+    - `visitador_contador.py`: `VisitadorContador(Visitador)` — contadores de habitaciones / puertas / paredes
+    - `armario.py`: `Armario(Contenedor)` — nuevo contenedor con `aceptar()` de propagación y `entrar()`
+    - `test_visitor.py`: 25 tests (TestVisitadorAbstracto + TestDobleDespacho + TestHabitacionAceptar + TestArmarioAceptar + TestVisitadorContador + TestContenedorAceptarPropagacion)
+  - Ficheros modificados:
+    - `elemento_mapa.py`: añadido método abstracto `aceptar(visitador) -> None`
+    - `contenedor.py`: añadida implementación base `aceptar()` — itera `_hijos` (heredada por Laberinto, Tunel, Armario)
+    - `habitacion.py`: sobrescribe `aceptar()` — `visitarHabitacion(self)` + propagación a hijos
+    - `puerta.py`: sobrescribe `aceptar()` — `visitarPuerta(self)`
+    - `pared.py`: sobrescribe `aceptar()` — `visitarPared(self)`
+    - Subclases concretas (ParedBomba, PuertaFuego, HabitacionCuadrada, etc.) heredan `aceptar()` correctamente sin cambios
+  - `main.py`: añadida `demo_visitor()` (sección 19)
+
+- ✅ **Flyweight** (v2.0.0) — extensión Avanzada
+  - Rama: `feature/flyweight`
+  - Patrón: Flyweight (pool de instancias compartidas; separación estado intrínseco / extrínseco)
+  - Roles:
+    - Flyweight          : `Moneda` (ABC) — `+posicion` (estado extrínseco); propiedad abstracta `value`
+    - ConcreteFlyweight A: `Oro` — `value = 10` (estado intrínseco fijo)
+    - ConcreteFlyweight B: `Plata` — `value = 5`
+    - ConcreteFlyweight C: `SuperMoneda` — `value = 50`
+    - FlyweightFactory   : `FactoriaMonedas` — `+monedas` pool (dict); `getMoneda(key)` devuelve la misma instancia para la misma clave
+    - Client             : `Laberinto` — tiene `+factoria_monedas: FactoriaMonedas`; obtiene monedas con `factoria_monedas.getMoneda(key)` y establece `posicion`
+  - Nuevos ficheros:
+    - `moneda.py`: `Moneda(ABC)` con `posicion` (extrínseco) y propiedad abstracta `value` (intrínseco)
+    - `oro.py`: `Oro(Moneda)` — `value = 10`
+    - `plata.py`: `Plata(Moneda)` — `value = 5`
+    - `super_moneda.py`: `SuperMoneda(Moneda)` — `value = 50`
+    - `factoria_monedas.py`: `FactoriaMonedas` con `_pool` dict, `getMoneda(key)`, propiedad `monedas`
+    - `test_flyweight.py`: 30 tests (TestMonedaAbstracta + TestConcreteFlyweights + TestFactoriaMonedas + TestLaberintoClienteFlyweight)
+  - Ficheros modificados:
+    - `laberinto.py`: importa `FactoriaMonedas`; `__init__` crea `self.factoria_monedas = FactoriaMonedas()`
+  - `main.py`: añadida `demo_flyweight()` (sección 20)
+
+- ✅ **Memento** (v2.1.0) — extensión Avanzada
+  - Rama: `feature/memento`
+  - Patrón: Memento (snapshot del estado interno del Originator sin violar encapsulamiento)
+  - Roles:
+    - Originator : `Laberinto` — `+estado` (property → `habitaciones`); `crearMemento()` genera snapshot; `cargarPartida(m)` restaura
+    - Memento    : `Memento` — almacena `_estado` (deepcopy de `habitaciones`); `getEstado()` / `setEstado()`
+    - Caretaker  : `Caretaker` — `+memento` (cardinalidad 1); `guardar(lab)` y `restaurar(lab)` como operaciones convenientes
+  - Nuevos ficheros:
+    - `memento.py`: `Memento` con `__init__(estado)`, `getEstado()`, `setEstado(estado)`
+    - `caretaker.py`: `Caretaker` con `self.memento = None`, `guardar(lab)`, `restaurar(lab)` (lanza `ValueError` si no hay memento)
+    - `test_memento.py`: 44 tests (TestMementoCreacion + TestLaberintoEstado + TestCrearMemento + TestSnapshotIndependiente + TestCargarPartida + TestCaretakerAtributo + TestCaretakerGuardar + TestCaretakerRestaurar + TestCicloCompleto)
+  - Ficheros modificados:
+    - `laberinto.py`: importa `Memento`; añadida property `estado`, métodos `crearMemento()` y `cargarPartida(m)`
+  - `main.py`: añadida `demo_memento()` (sección 21)
+
+- ✅ **Chain of Responsibility** (v2.2.0) — extensión Avanzada
+  - Rama: `feature/chain`
+  - Patrón: Chain of Responsibility (la petición se pasa entre ElementoMapas hasta que el destinatario responde)
+  - Roles:
+    - Handler (abstract) : `ElementoMapa` — `+sucesor`; `cerrarPuertas()` por defecto pasa al sucesor
+    - ConcreteHandler que maneja : `Puerta` — `cerrarPuertas()` cierra la puerta y continúa la cadena
+    - ConcreteHandler que pasa   : `Pared`  — hereda el comportamiento base (sin override)
+    - Client             : `Juego` — `+handler` (1); `cerrarPuertas()` lanza la petición en el primer handler
+  - Nuevos ficheros:
+    - `test_chain.py`: 27 tests (TestElementoMapaSucesor + TestParedCerrarPuertas + TestPuertaCerrarPuertas + TestCadenasMixtas + TestJuegoClienteCoR + TestCicloCompleto)
+  - Ficheros modificados:
+    - `elemento_mapa.py`: añadido `self.sucesor = None`; añadido `cerrarPuertas()` base (pasa al sucesor)
+    - `puerta.py`: añadido `cerrarPuertas()` — `self.cerrar()` + `super().cerrarPuertas()`
+    - `juego.py`: añadido `self.handler = None`; añadido `cerrarPuertas()` (lanza la cadena desde `self.handler`)
+  - `main.py`: añadida `demo_chain()` (sección 22)

@@ -330,7 +330,497 @@ def demo_iterator():
     print("=" * 60)
 
 
+def demo_mediator():
+    """Demuestra el patrón Mediator: Juego coordina Bicho y Personaje."""
+    import os
+    from laberinto_json_builder import LaberintoJsonBuilder
+
+    print("\n" + "=" * 60)
+    print("15. Demostración del Patrón Mediator (Juego / Bicho / Personaje):")
+    print("=" * 60)
+
+    # --- Construir laberinto y entidades desde JSON ---
+    config = os.path.join(os.path.dirname(__file__), "laberinto_config.json")
+    builder = LaberintoJsonBuilder(config)
+    juego_med = Juego()
+    Director(builder).procesar()
+    builder.fabricar_entidades(juego_med)
+
+    personaje = juego_med.personaje
+    goblin = juego_med.bichos[0]
+    troll  = juego_med.bichos[1]
+
+    print(f"\nPersonaje  : {personaje.nombre} | vidas={personaje.vidas} | poder={personaje.poder}")
+    for b in juego_med.bichos:
+        print(f"Bicho      : {b.nombre} | vidas={b.vidas} | poder={b.poder} | modo={b.modo}")
+
+    # --- Colocar al goblin y al personaje en la misma habitación ---
+    lab = builder.fabricarLaberinto()
+    hab1 = lab.obtener_habitacion(1)
+    goblin.posicion   = hab1
+    personaje.posicion = hab1
+
+    print("\n--- Turno 1: Goblin ataca al Personaje (misma habitación) ---")
+    juego_med.turno_bicho(goblin)
+
+    print("\n--- Turno 2: Personaje contraataca al Goblin ---")
+    juego_med.turno_personaje(goblin)
+
+    print("\n--- Turno 3: Personaje elimina al Goblin ---")
+    resultado = juego_med.turno_personaje(goblin)
+
+    print("\n--- Turno 4: Personaje ataca al Troll (varios turnos hasta victoria) ---")
+    resultado = None
+    while resultado is None and troll.esta_vivo():
+        resultado = juego_med.turno_personaje(troll)
+
+    print("\nEl Mediador (Juego) coordinó todas las interacciones:")
+    print("  Bicho y Personaje nunca se llamaron entre sí directamente.")
+    print("  Condición de fin: victoria (todos los bichos derrotados).")
+
+    print("=" * 60)
+    print("Fin demostración Mediator")
+    print("=" * 60)
+
+
+def demo_prototype():
+    """Demuestra el patrón Prototype: Juego clona su laberinto."""
+    import os
+    from laberinto_json_builder import LaberintoJsonBuilder
+    from laberinto_cuadrado import LaberintoCuadrado
+    from laberinto_rombiforme import LaberintoRombiforme
+
+    print("\n" + "=" * 60)
+    print("16. Demostración del Patrón Prototype (Juego / Laberinto):")
+    print("=" * 60)
+
+    config = os.path.join(os.path.dirname(__file__), "laberinto_config.json")
+    builder = LaberintoJsonBuilder(config)
+    juego = Juego()
+    Director(builder).procesar()
+    juego.laberinto = builder.fabricarLaberinto()
+
+    print(f"\nLaberinto original : {juego.laberinto}")
+    print(f"Tipo               : {type(juego.laberinto).__name__}")
+
+    clon = juego.clonarLaberinto()
+    print(f"\nClon obtenido      : {clon}")
+    print(f"Tipo del clon      : {type(clon).__name__}")
+    print(f"¿Es el mismo objeto? {juego.laberinto is clon}")
+
+    # Modificar el clon no afecta al original
+    from habitacion_cuadrada import HabitacionCuadrada
+    clon.agregar_habitacion(HabitacionCuadrada(99))
+    print(f"\nTras añadir hab 99 al clon:")
+    print(f"  Original tiene {len(juego.laberinto.habitaciones)} habitaciones")
+    print(f"  Clon tiene     {len(clon.habitaciones)} habitaciones")
+
+    print("\nEl Prototipo (Laberinto) se clona a sí mismo;")
+    print("Juego nunca crea habitaciones manualmente — delega en clone().")
+
+    print("\n" + "=" * 60)
+    print("Fin demostración Prototype")
+    print("=" * 60)
+
+
+def demo_bridge():
+    """Demuestra el patrón Bridge: Forma desacoplada de Habitacion."""
+    import os
+    from forma import Cuadrado, Rombo
+    from habitacion_cuadrada import HabitacionCuadrada
+    from habitacion_rombiforme import HabitacionRombiforme
+    from laberinto_json_builder import LaberintoJsonBuilder
+
+    print("\n" + "=" * 60)
+    print("14. Demostración del Patrón Bridge (Forma / Habitacion):")
+    print("=" * 60)
+
+    # --- Implementors independientes ---
+    print("\nImplementors (Forma):")
+    print(f"  {Cuadrado()}")
+    print(f"  {Rombo()}")
+
+    # --- Refined Abstractions directas ---
+    print("\nRefined Abstractions creadas directamente:")
+    hc = HabitacionCuadrada(10)
+    hr = HabitacionRombiforme(11)
+    print(f"  {hc}  -> forma: {hc.forma}")
+    print(f"  {hr}  -> forma: {hr.forma}")
+
+    print(f"\n  Lados de {hc}:")
+    for ori, elem in hc.orientaciones.items():
+        print(f"    {ori}: {elem}")
+
+    print(f"\n  Lados de {hr}:")
+    for ori, elem in hr.orientaciones.items():
+        print(f"    {ori}: {elem}")
+
+    # --- Construcción desde JSON (Builder) ---
+    print("\nConstrucción desde laberinto_config.json (Builder + Bridge):")
+    config = os.path.join(os.path.dirname(__file__), "laberinto_config.json")
+    lab = Director(LaberintoJsonBuilder(config)).procesar()
+
+    hab1 = lab.obtener_habitacion(1)
+    print(f"  Habitación 1 del JSON: {hab1}  [tipo: {type(hab1).__name__}]")
+    tunel = hab1.obtener_lado(Norte())
+    hab3 = tunel.laberinto.obtener_habitacion(3)
+    print(f"  Habitación 3 (laberinto secundario): {hab3}  [tipo: {type(hab3).__name__}]")
+    print(f"  Forma de hab3: {hab3.forma}")
+
+    print("\nEl Bridge desacopla la jerarquía de Habitacion de la de Forma:")
+    print("  Abstraction  : Contenedor (+forma)")
+    print("  Refined Abs. : HabitacionCuadrada, HabitacionRombiforme")
+    print("  Implementor  : Forma")
+    print("  Conc. Impl.  : Cuadrado (N/S/E/O), Rombo (NE/NO/SE/SO)")
+
+    print("\n" + "=" * 60)
+    print("Fin demostración Bridge")
+    print("=" * 60)
+
+
+def demo_proxy():
+    """Demuestra el patrón Proxy: Tunel como proxy de Laberinto."""
+    import os
+    from tunel import Tunel
+    from laberinto_json_builder import LaberintoJsonBuilder
+
+    print("\n" + "=" * 60)
+    print("13. Demostración del Patrón Proxy (Tunel):")
+    print("=" * 60)
+
+    # --- Construcción desde JSON (requisito Builder) ---
+    config = os.path.join(os.path.dirname(__file__), "laberinto_config.json")
+    builder = LaberintoJsonBuilder(config)
+    director = Director(builder)
+    lab_principal = director.procesar()
+
+    print(f"\nLaberinto construido desde JSON: {lab_principal}")
+    for numero, habitacion in lab_principal.habitaciones.items():
+        print(f"\n   {habitacion}")
+        for orientacion, elemento in habitacion.orientaciones.items():
+            print(f"      - {orientacion}: {elemento}")
+
+    # --- El Tunel como lado de la Habitacion 1 ---
+    hab1 = lab_principal.obtener_habitacion(1)
+    tunel = hab1.obtener_lado(Norte())
+    print(f"\nLado Norte de Habitación 1 es: {tunel}  [tipo: {type(tunel).__name__}]")
+    print(f"Laberinto al que apunta: {tunel.laberinto}")
+
+    # --- El bicho entra al túnel: teletransporte ---
+    bicho_proxy = Bicho("Explorador", Perezoso())
+    hab1.entrar(bicho_proxy)
+    print(f"\n{bicho_proxy.nombre} está en: {bicho_proxy.posicion}")
+
+    print(f"\n{bicho_proxy.nombre} intenta entrar por el Norte (Tunel):")
+    tunel.entrar(bicho_proxy)
+    print(f"  Ahora está en: {bicho_proxy.posicion}  <- laberinto secundario")
+
+    print("\nEl Tunel (Proxy) delegó entrar() en el Laberinto real sin que")
+    print("el Bicho supiera que cruzó a otro laberinto.")
+
+    print("\n" + "=" * 60)
+    print("Fin demostración Proxy")
+    print("=" * 60)
+
+
+def demo_prototype():
+    """Demuestra el patrón Prototype: Juego clona su laberinto."""
+    import os
+    from laberinto_json_builder import LaberintoJsonBuilder
+    from laberinto_cuadrado import LaberintoCuadrado
+    from habitacion_cuadrada import HabitacionCuadrada
+
+    print("\n" + "=" * 60)
+    print("16. Demostración del Patrón Prototype (Juego / Laberinto):")
+    print("=" * 60)
+
+    config = os.path.join(os.path.dirname(__file__), "laberinto_config.json")
+    builder = LaberintoJsonBuilder(config)
+    juego_proto = Juego()
+    Director(builder).procesar()
+    juego_proto.laberinto = builder.fabricarLaberinto()
+
+    print(f"\nLaberinto original : {juego_proto.laberinto}")
+    print(f"Tipo               : {type(juego_proto.laberinto).__name__}")
+
+    clon = juego_proto.clonarLaberinto()
+    print(f"\nClon obtenido      : {clon}")
+    print(f"Tipo del clon      : {type(clon).__name__}")
+    print(f"¿Es el mismo objeto? {juego_proto.laberinto is clon}")
+
+    # Modificar el clon no afecta al original
+    clon.agregar_habitacion(HabitacionCuadrada(99))
+    print(f"\nTras añadir hab 99 al clon:")
+    print(f"  Original tiene {len(juego_proto.laberinto.habitaciones)} habitaciones")
+    print(f"  Clon tiene     {len(clon.habitaciones)} habitaciones")
+
+    print("\nEl Prototipo (Laberinto) se clona a sí mismo;")
+    print("Juego.clonarLaberinto() delega en laberinto.clone().")
+
+    print("\n" + "=" * 60)
+    print("Fin demostración Prototype")
+    print("=" * 60)
+
+
+def demo_observer():
+    """Demuestra el patrón Observer: Juego (Subject) notifica a LaberintoGUI (Observer)."""
+    import os
+    from laberinto_json_builder import LaberintoJsonBuilder
+    from laberinto_gui import LaberintoGUI
+    from personaje import Personaje
+
+    print("\n" + "=" * 60)
+    print("17. Demostración del Patrón Observer (Juego / LaberintoGUI):")
+    print("=" * 60)
+
+    # Construir juego con laberinto desde JSON
+    config = os.path.join(os.path.dirname(__file__), "laberinto_config.json")
+    builder = LaberintoJsonBuilder(config)
+    juego_obs = Juego()
+    Director(builder).procesar()
+    juego_obs.laberinto = builder.fabricarLaberinto()
+    builder.fabricar_entidades(juego_obs)
+
+    # Crear y suscribir la GUI como observadora
+    gui = LaberintoGUI()
+    juego_obs.suscribir(gui)
+    print("\nLaberintoGUI suscrita al Juego como observadora.")
+    print(f"Observadores activos: {len(juego_obs._observadores)}")
+
+    # Un ataque dispara la notificación automáticamente
+    personaje = juego_obs.personaje
+    if juego_obs.bichos:
+        bicho = juego_obs.bichos[0]
+        print(f"\n[Ataque] {bicho.nombre} ataca a {personaje.nombre}...")
+        juego_obs.notificar_ataque(bicho, personaje)
+
+    # Desuscribir y comprobar que la GUI ya no recibe notificaciones
+    juego_obs.desuscribir(gui)
+    print(f"\nGUI desuscrita. Observadores activos: {len(juego_obs._observadores)}")
+    print("Próxima notificación no llegará a la GUI.")
+
+    print("\n" + "=" * 60)
+    print("Fin demostración Observer")
+    print("=" * 60)
+
+
+def demo_command():
+    """Demuestra el patrón Command: Puerta con comandos Abrir y Cerrar."""
+    from puerta import Puerta
+    from abrir import Abrir
+    from cerrar import Cerrar
+
+    print("\n" + "=" * 60)
+    print("18. Demostración del Patrón Command (Puerta / Abrir / Cerrar):")
+    print("=" * 60)
+
+    puerta = Puerta()
+    print(f"\nPuerta inicial   : {puerta}")
+    print(f"Comandos disponibles: {[type(c).__name__ for c in puerta.comandos]}")
+
+    print("\n[Invoker] Ejecutando Abrir...")
+    puerta.comandos[0].ejecutar()
+    print(f"  Estado puerta  : {puerta}")
+
+    print("\n[Invoker] Ejecutando Cerrar...")
+    puerta.comandos[1].ejecutar()
+    print(f"  Estado puerta  : {puerta}")
+
+    print("\nTambién se pueden crear comandos independientes:")
+    cmd_abrir = Abrir(puerta)
+    cmd_abrir.ejecutar()
+    print(f"  Abrir directo  : {puerta}")
+
+    print("\n" + "=" * 60)
+    print("Fin demostración Command")
+    print("=" * 60)
+
+
+def demo_visitor():
+    """Demuestra el patrón Visitor: VisitadorContador recorre el laberinto."""
+    import os
+    from laberinto_json_builder import LaberintoJsonBuilder
+    from visitador_contador import VisitadorContador
+    from armario import Armario
+    from pared import Pared
+    from puerta import Puerta
+
+    print("\n" + "=" * 60)
+    print("19. Demostración del Patrón Visitor (Laberinto / VisitadorContador):")
+    print("=" * 60)
+
+    # Construir laberinto desde JSON
+    config = os.path.join(os.path.dirname(__file__), "laberinto_config.json")
+    builder = LaberintoJsonBuilder(config)
+    Director(builder).procesar()
+    lab = builder.fabricarLaberinto()
+
+    # Recorrer con el Visitador Contador
+    vc = VisitadorContador()
+    lab.aceptar(vc)
+    print(f"\nLaberinto analizado : {lab}")
+    print(f"Resultado           : {vc}")
+
+    # Añadir un Armario con objetos y recorrer de nuevo
+    armario = Armario("Tesoro")
+    armario.agregar_hijo(Pared())
+    armario.agregar_hijo(Puerta())
+    hab = list(lab.habitaciones.values())[0]
+    hab.agregar_hijo(armario)
+
+    vc2 = VisitadorContador()
+    lab.aceptar(vc2)
+    print(f"\nTras añadir Armario('Tesoro') con Pared + Puerta a hab #{hab.numero}:")
+    print(f"  {vc2}")
+    print(f"  (El Armario propaga la visita a sus hijos sin contarse a sí mismo)")
+
+    print("\n" + "=" * 60)
+    print("Fin demostración Visitor")
+    print("=" * 60)
+
+
+def demo_flyweight():
+    """Demuestra el patrón Flyweight: FactoriaMonedas comparte instancias de Moneda."""
+    from laberinto import Laberinto
+    from habitacion import Habitacion
+    from orientacion import Norte, Sur, Este, Oeste
+    from pared import Pared
+
+    print("\n" + "=" * 60)
+    print("20. Demostración del Patrón Flyweight (Moneda / FactoriaMonedas):")
+    print("=" * 60)
+
+    lab = Laberinto()
+    h1 = Habitacion(1)
+    h2 = Habitacion(2)
+    lab.agregar_habitacion(h1)
+    lab.agregar_habitacion(h2)
+
+    f = lab.factoria_monedas
+
+    # Obtener flyweights: misma instancia para la misma clave
+    oro1 = f.getMoneda("oro")
+    oro2 = f.getMoneda("oro")
+    plata = f.getMoneda("plata")
+    super_m = f.getMoneda("super_moneda")
+
+    print(f"\nFactoria tiene {len(f)} instancias en pool (crea solo una por tipo):")
+    for m in f.monedas:
+        print(f"  {type(m).__name__}: value={m.value}")
+
+    print(f"\noro1 is oro2 (misma instancia): {oro1 is oro2}")
+    print(f"oro1 is plata (instancias distintas): {oro1 is plata}")
+
+    # Estado extrínseco: posicion cambia sin crear nuevos objetos
+    oro1.posicion = h1
+    plata.posicion = h2
+    super_m.posicion = h1
+    print(f"\nEstado extrínseco (posicion) — sin crear objetos nuevos:")
+    for m in f.monedas:
+        print(f"  {m}")
+
+    print("\n" + "=" * 60)
+    print("Fin demostración Flyweight")
+    print("=" * 60)
+
+
+def demo_memento():
+    """Demuestra el patrón Memento: Laberinto (Originator) guarda y restaura su estado."""
+    from laberinto import Laberinto
+    from habitacion import Habitacion
+    from caretaker import Caretaker
+
+    print("\n" + "=" * 60)
+    print("21. Demostración del Patrón Memento (Laberinto / Caretaker):")
+    print("=" * 60)
+
+    # Estado inicial: laberinto con 2 habitaciones
+    lab = Laberinto()
+    lab.agregar_habitacion(Habitacion(1))
+    lab.agregar_habitacion(Habitacion(2))
+    print(f"\nEstado inicial: {lab}")
+
+    # Caretaker guarda el estado (snapshot)
+    ct = Caretaker()
+    ct.guardar(lab)
+    print(f"Caretaker guarda snapshot: {len(ct.memento.getEstado())} habitaciones")
+
+    # Se modifica el laberinto (se añaden habitaciones)
+    lab.agregar_habitacion(Habitacion(3))
+    lab.agregar_habitacion(Habitacion(4))
+    print(f"\nTras modificación: {lab}")
+
+    # El snapshot del Caretaker no se vio afectado (independencia deepcopy)
+    print(f"Snapshot en Caretaker sigue con {len(ct.memento.getEstado())} habitaciones")
+
+    # Caretaker restaura el estado original
+    ct.restaurar(lab)
+    print(f"\nTras restaurar: {lab}")
+    print(f"Habitaciones: {sorted(lab.habitaciones.keys())}")
+    print(f"_hijos Composite: {len(lab._hijos)}")
+    print(f"estado property apunta a habitaciones: {lab.estado is lab.habitaciones}")
+
+    print("\n" + "=" * 60)
+    print("Fin demostración Memento")
+    print("=" * 60)
+
+
+def demo_chain():
+    """Demuestra el patrón Chain of Responsibility: Juego lanza cerrarPuertas() por la cadena."""
+    from juego import Juego
+    from puerta import Puerta
+    from pared import Pared
+
+    print("\n" + "=" * 60)
+    print("22. Demostración del Patrón Chain of Responsibility (cerrarPuertas):")
+    print("=" * 60)
+
+    # Construir cadena: Pared → Puerta1 → Pared → Puerta2
+    pared1 = Pared()
+    puerta1 = Puerta()
+    pared2 = Pared()
+    puerta2 = Puerta()
+
+    puerta1.abrir()
+    puerta2.abrir()
+
+    pared1.sucesor = puerta1
+    puerta1.sucesor = pared2
+    pared2.sucesor = puerta2
+    # puerta2.sucesor = None  (por defecto)
+
+    print(f"\nEstado inicial — {puerta1}  |  {puerta2}")
+
+    # Juego es el Client: apunta al primer elemento de la cadena
+    juego = Juego()
+    juego.handler = pared1
+
+    print("Lanzando juego.cerrarPuertas() ...")
+    print("  Pared1  → pasa al sucesor")
+    print("  Puerta1 → se cierra, pasa al sucesor")
+    print("  Pared2  → pasa al sucesor")
+    print("  Puerta2 → se cierra, fin de la cadena")
+
+    juego.cerrarPuertas()
+
+    print(f"\nEstado final  — {puerta1}  |  {puerta2}")
+
+    print("\n" + "=" * 60)
+    print("Fin demostración Chain of Responsibility")
+    print("=" * 60)
+
+
 if __name__ == "__main__":
     main()
     demo_composite()
     demo_iterator()
+    demo_bridge()
+    demo_proxy()
+    demo_mediator()
+    demo_prototype()
+    demo_observer()
+    demo_command()
+    demo_visitor()
+    demo_flyweight()
+    demo_memento()
+    demo_chain()

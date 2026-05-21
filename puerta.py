@@ -2,6 +2,8 @@
 Clase Puerta - Hoja concreta del mapa (Composite).
 """
 from hoja import Hoja
+from abrir import Abrir
+from cerrar import Cerrar
 
 
 class Puerta(Hoja):
@@ -16,6 +18,8 @@ class Puerta(Hoja):
         self.abierta = False
         self.lado1 = None  # Primera habitacion conectada
         self.lado2 = None  # Segunda habitacion conectada
+        # Patrón Command: comandos disponibles sobre esta puerta
+        self.comandos = [Abrir(self), Cerrar(self)]
     
     def abrir(self):
         """Abre la puerta."""
@@ -38,6 +42,18 @@ class Puerta(Hoja):
                 self.lado1.entrar(alguien)
         else:
             print("  La puerta está cerrada.")
+
+    def cerrarPuertas(self) -> None:
+        """
+        Patrón Chain of Responsibility — ConcreteHandler que responde.
+        Cierra esta puerta y continúa la cadena pasando al sucesor.
+        """
+        self.cerrar()
+        super().cerrarPuertas()  # continuar la cadena
+
+    def aceptar(self, visitador) -> None:
+        """Patrón Visitor — doble despacho: llama a visitarPuerta."""
+        visitador.visitarPuerta(self)
 
     def __str__(self):
         """Representación en string de la puerta."""

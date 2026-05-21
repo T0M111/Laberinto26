@@ -63,6 +63,15 @@ class Habitacion(Contenedor):
         valores = list(self.orientaciones.values())
         return valores[random.randint(0, len(valores) - 1)]
 
+    def aceptar(self, visitador) -> None:
+        """
+        Patrón Visitor: primero notifica al visitador (doble despacho)
+        y luego propaga la visita a todos los elementos del lado.
+        """
+        visitador.visitarHabitacion(self)
+        for hijo in self._hijos:
+            hijo.aceptar(visitador)
+
     def __str__(self):
         """Representación en string de la habitación."""
         return f"Habitacion #{self.numero}"

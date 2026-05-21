@@ -16,6 +16,7 @@ class Contenedor(ElementoMapa):
     def __init__(self):
         super().__init__()
         self._hijos = []  # +hijos: List[ElementoMapa]
+        self.forma = None  # +forma: Forma  [Bridge, cardinalidad 0..1; None si sin forma definida]
 
     # --- Gestión de hijos ---
 
@@ -58,6 +59,15 @@ class Contenedor(ElementoMapa):
         yield self
         for hijo in self._hijos:
             yield from hijo.recorrer()
+
+    def aceptar(self, visitador) -> None:
+        """
+        Patrón Visitor: propaga la visita a todos los hijos.
+        Los contenedores sin método visitarXxx propio (Laberinto, etc.)
+        usan esta implementación base.
+        """
+        for hijo in self._hijos:
+            hijo.aceptar(visitador)
 
     def entrar(self, alguien):
         """

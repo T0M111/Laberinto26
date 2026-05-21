@@ -1,24 +1,29 @@
 """
-Patrón Adapter - Cliente.
-Personaje interactúa únicamente con la interfaz Varita para cambiar
-el modo de un bicho, sin necesidad de conocer la clase Bicho.
+Clase Personaje - Colleague concreto B del patrón Mediator.
+Hereda de Ente y actúa como cliente del patrón Adapter (Varita).
 """
 from varita import Varita
+from ente import Ente
 
 
-class Personaje:
+class Personaje(Ente):
     """
-    Cliente del patrón Adapter.
-    Pide a su Varita que cambie el modo del objeto subyacente.
-    No sabe (ni necesita saber) si la Varita envuelve un Bicho u otra entidad.
+    Colleague B del patrón Mediator.
+    Hereda de Ente: vidas, poder, estado y referencia al Mediador (_juego).
+    Mantiene además su rol de cliente del Adapter: usa una Varita (opcional)
+    para cambiar el modo de un Bicho sin acoplarse a él directamente.
     """
 
-    def __init__(self, nombre: str, varita: Varita):
+    def __init__(self, nombre: str, varita: Varita = None,
+                 vidas: int = 5, poder: int = 2):
         """
         Args:
-            nombre:  Nombre identificador del personaje.
-            varita:  Varita (o BichoAdapter) que el personaje usará.
+            nombre: Nombre identificador del personaje.
+            varita: Varita (o BichoAdapter) que el personaje usará (opcional).
+            vidas:  Puntos de vida (por defecto 5).
+            poder:  Daño que inflige por ataque (por defecto 2).
         """
+        super().__init__(vidas=vidas, poder=poder)
         self.nombre = nombre
         self.varita = varita
 

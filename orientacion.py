@@ -56,3 +56,33 @@ class Oeste(Orientacion):
 
     def obtener_nombre(self):
         return "Oeste"
+
+
+# --- Orientaciones diagonales (usadas por Rombo en el patrón Bridge) ---
+
+class Noreste(Orientacion):
+    """Estrategia concreta: orientación Noreste (diagonal NE)."""
+
+    def obtener_nombre(self):
+        return "Noreste"
+
+
+class Noroeste(Orientacion):
+    """Estrategia concreta: orientación Noroeste (diagonal NO)."""
+
+    def obtener_nombre(self):
+        return "Noroeste"
+
+
+class Sureste(Orientacion):
+    """Estrategia concreta: orientación Sureste (diagonal SE)."""
+
+    def obtener_nombre(self):
+        return "Sureste"
+
+
+class Suroeste(Orientacion):
+    """Estrategia concreta: orientación Suroeste (diagonal SO)."""
+
+    def obtener_nombre(self):
+        return "Suroeste"

@@ -1,0 +1,55 @@
+{
+  "comentario": "Configuración del laberinto con soporte para Proxy (Tunel), Bridge (HabitacionCuadrada/Rombiforme), Mediator (entidades) y Prototype (LaberintoCuadrado/LaberintoRombiforme).",
+  "laberintos": [
+    {
+      "id": "principal",
+      "tipo": "laberinto_cuadrado",
+      "habitaciones": [
+        {
+          "numero": 1,
+          "tipo": "habitacion_cuadrada",
+          "lados": {
+            "norte": { "tipo": "tunel", "destino": "secundario" },
+            "sur":   { "tipo": "pared" },
+            "este":  { "tipo": "puerta", "id": "puerta1" },
+            "oeste": { "tipo": "pared" }
+          }
+        },
+        {
+          "numero": 2,
+          "tipo": "habitacion_cuadrada",
+          "lados": {
+            "norte": { "tipo": "pared" },
+            "sur":   { "tipo": "pared" },
+            "este":  { "tipo": "pared" },
+            "oeste": { "tipo": "puerta", "id": "puerta1" }
+          }
+        }
+      ]
+    },
+    {
+      "id": "secundario",
+      "tipo": "laberinto_rombiforme",
+      "habitaciones": [
+        {
+          "numero": 3,
+          "tipo": "habitacion_rombiforme",
+          "lados": {
+            "noreste":  { "tipo": "pared" },
+            "noroeste": { "tipo": "pared" },
+            "sureste":  { "tipo": "pared" },
+            "suroeste": { "tipo": "pared" }
+          }
+        }
+      ]
+    }
+  ],
+  "laberinto_raiz": "principal",
+  "entidades": {
+    "personaje": { "nombre": "Heroe", "vidas": 5, "poder": 2 },
+    "bichos": [
+      { "nombre": "Goblin", "vidas": 3, "poder": 1, "modo": "agresivo" },
+      { "nombre": "Troll",  "vidas": 5, "poder": 2, "modo": "perezoso" }
+    ]
+  }
+}

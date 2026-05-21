@@ -14,6 +14,10 @@ class Pared(Hoja):
         """Inicializa una pared."""
         super().__init__()
     
+    def aceptar(self, visitador) -> None:
+        """Patrón Visitor — doble despacho: llama a visitarPared."""
+        visitador.visitarPared(self)
+
     def __str__(self):
         """Representación en string de la pared."""
         return "Pared"

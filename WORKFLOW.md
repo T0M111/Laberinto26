@@ -180,6 +180,7 @@ git pull origin main
 - `v1.8.0` - Command (Abrir / Cerrar sobre Puerta; ElementoMapa con +comandos)
 - `v1.9.0` - Visitor (Visitador ABC; VisitadorContador; +aceptar() en ElementoMapa; nuevo Armario)
 - `v2.0.0` - Flyweight (Moneda ABC; Oro/Plata/SuperMoneda; FactoriaMonedas pool; Laberinto como cliente)
+- `v2.1.0` - Memento (Laberinto como Originator; Memento snapshot; Caretaker custodia +memento)
 
 ---
 
@@ -353,3 +354,18 @@ git pull origin main
   - Ficheros modificados:
     - `laberinto.py`: importa `FactoriaMonedas`; `__init__` crea `self.factoria_monedas = FactoriaMonedas()`
   - `main.py`: añadida `demo_flyweight()` (sección 20)
+
+- ✅ **Memento** (v2.1.0) — extensión Avanzada
+  - Rama: `feature/memento`
+  - Patrón: Memento (snapshot del estado interno del Originator sin violar encapsulamiento)
+  - Roles:
+    - Originator : `Laberinto` — `+estado` (property → `habitaciones`); `crearMemento()` genera snapshot; `cargarPartida(m)` restaura
+    - Memento    : `Memento` — almacena `_estado` (deepcopy de `habitaciones`); `getEstado()` / `setEstado()`
+    - Caretaker  : `Caretaker` — `+memento` (cardinalidad 1); `guardar(lab)` y `restaurar(lab)` como operaciones convenientes
+  - Nuevos ficheros:
+    - `memento.py`: `Memento` con `__init__(estado)`, `getEstado()`, `setEstado(estado)`
+    - `caretaker.py`: `Caretaker` con `self.memento = None`, `guardar(lab)`, `restaurar(lab)` (lanza `ValueError` si no hay memento)
+    - `test_memento.py`: 44 tests (TestMementoCreacion + TestLaberintoEstado + TestCrearMemento + TestSnapshotIndependiente + TestCargarPartida + TestCaretakerAtributo + TestCaretakerGuardar + TestCaretakerRestaurar + TestCicloCompleto)
+  - Ficheros modificados:
+    - `laberinto.py`: importa `Memento`; añadida property `estado`, métodos `crearMemento()` y `cargarPartida(m)`
+  - `main.py`: añadida `demo_memento()` (sección 21)

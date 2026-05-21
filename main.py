@@ -724,6 +724,47 @@ def demo_flyweight():
     print("=" * 60)
 
 
+def demo_memento():
+    """Demuestra el patrón Memento: Laberinto (Originator) guarda y restaura su estado."""
+    from laberinto import Laberinto
+    from habitacion import Habitacion
+    from caretaker import Caretaker
+
+    print("\n" + "=" * 60)
+    print("21. Demostración del Patrón Memento (Laberinto / Caretaker):")
+    print("=" * 60)
+
+    # Estado inicial: laberinto con 2 habitaciones
+    lab = Laberinto()
+    lab.agregar_habitacion(Habitacion(1))
+    lab.agregar_habitacion(Habitacion(2))
+    print(f"\nEstado inicial: {lab}")
+
+    # Caretaker guarda el estado (snapshot)
+    ct = Caretaker()
+    ct.guardar(lab)
+    print(f"Caretaker guarda snapshot: {len(ct.memento.getEstado())} habitaciones")
+
+    # Se modifica el laberinto (se añaden habitaciones)
+    lab.agregar_habitacion(Habitacion(3))
+    lab.agregar_habitacion(Habitacion(4))
+    print(f"\nTras modificación: {lab}")
+
+    # El snapshot del Caretaker no se vio afectado (independencia deepcopy)
+    print(f"Snapshot en Caretaker sigue con {len(ct.memento.getEstado())} habitaciones")
+
+    # Caretaker restaura el estado original
+    ct.restaurar(lab)
+    print(f"\nTras restaurar: {lab}")
+    print(f"Habitaciones: {sorted(lab.habitaciones.keys())}")
+    print(f"_hijos Composite: {len(lab._hijos)}")
+    print(f"estado property apunta a habitaciones: {lab.estado is lab.habitaciones}")
+
+    print("\n" + "=" * 60)
+    print("Fin demostración Memento")
+    print("=" * 60)
+
+
 if __name__ == "__main__":
     main()
     demo_composite()
@@ -736,3 +777,4 @@ if __name__ == "__main__":
     demo_command()
     demo_visitor()
     demo_flyweight()
+    demo_memento()

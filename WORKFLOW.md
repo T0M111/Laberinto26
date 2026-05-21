@@ -176,6 +176,7 @@ git pull origin main
 - `v1.4.0` - Mediator (Juego coordina Bicho / Personaje a través de Ente)
 - `v1.5.0` - State (Estado / Vivo / Muerto aplicado al ciclo de vida de Ente)
 - `v1.6.0` - Prototype (LaberintoCuadrado / LaberintoRombiforme; Juego.clonarLaberinto())
+- `v1.7.0` - Observer (Juego como Subject; LaberintoGUI como ConcreteObserver)
 
 ---
 
@@ -268,3 +269,18 @@ git pull origin main
     - `laberinto_config.json`: añadido campo `"tipo"` en cada laberinto (`laberinto_cuadrado` / `laberinto_rombiforme`)
     - `laberinto_json_builder.py`: importa `LaberintoCuadrado`/`LaberintoRombiforme`; tabla `_TIPOS_LABERINTO`; primera pasada usa el tipo correcto
   - `main.py`: añadida `demo_prototype()` (sección 16)
+
+- ✅ **Observer** (v1.7.0) — extensión Media
+  - Rama: `feature/observer`
+  - Patrón: Observer (variante Pull — el ConcreteObserver recibe el Subject y extrae lo que necesita)
+  - Roles:
+    - Subject            : `Juego` — mantiene `_observadores: list`; métodos `suscribir()`, `desuscribir()`, `notificar()`
+    - Observer           : `Observador` (ABC) — define `actualizar(juego) -> None`
+    - ConcreteObserver   : `LaberintoGUI` — referencia de vuelta `+juego`; `actualizar()` actualiza `self.juego` y llama `_mostrar_estado()`
+  - Nuevos ficheros:
+    - `observador.py`: `Observador(ABC)` con método abstracto `actualizar(self, juego) -> None`
+    - `laberinto_gui.py`: `LaberintoGUI(Observador)` — muestra vidas/estado del Personaje y los Bichos, e indica resultado (Victoria / Derrota / en curso)
+    - `test_observer.py`: 21 tests (TestObservadorAbstracto + TestJuegoSubject + TestLaberintoGUI)
+  - Ficheros modificados:
+    - `juego.py`: añadido `self._observadores = []` en `__init__`; métodos `suscribir()`, `desuscribir()`, `notificar()`; `notificar_ataque()` llama `self.notificar()` automáticamente al final de cada ataque
+  - `main.py`: añadida `demo_observer()` (sección 17)

@@ -1,5 +1,11 @@
 """
-Clase Juego - Factory Method, Abstract Factory, Mediator y cliente Prototype.
+Clase Juego - Factory Method, Abstract Factory, Mediator, cliente Prototype y Subject Observer.
+
+Patón Observer (Subject):
+  - Subject          : Juego   (este fichero)
+  - Observer         : Observador   (observador.py)
+  - ConcreteObserver : LaberintoGUI (laberinto_gui.py)
+  Juego notifica a todos sus observadores cada vez que el estado del juego cambia.
 
 Patón Prototype (cliente):
   - Client    : Juego.clonarLaberinto()  — clona el laberinto activo
@@ -35,6 +41,8 @@ class Juego:
         # --- Mediator ---
         self.personaje = None  # Colleague B: el Personaje del jugador
         self.bichos = []       # Colleague A: lista de Bichos activos
+        # --- Observer (Subject) ---
+        self._observadores = []  # lista de Observador suscritos
     
     def obtener_habitacion(self, numero):
         """
@@ -183,7 +191,9 @@ class Juego:
         objetivo.recibir_danio(atacante.poder)
         print(f"  {atacante.nombre} ataca a {objetivo.nombre}! "
               f"[{objetivo.nombre}: {objetivo.vidas} vidas, estado: {objetivo.estado}]")
-        return self.verificar_fin_juego()
+        resultado = self.verificar_fin_juego()
+        self.notificar()  # Observer: avisa a todos los observadores
+        return resultado
 
     def turno_bicho(self, bicho):
         """
@@ -249,6 +259,38 @@ class Juego:
             print("\n  *** VICTORIA: Todos los bichos han sido derrotados. ***")
             return "victoria"
         return None
+
+    # ------------------------------------------------------------------
+    # Patrón Observer (Subject)
+    # ------------------------------------------------------------------
+
+    def suscribir(self, observador) -> None:
+        """
+        Registra un Observador para recibir notificaciones de este Juego.
+
+        Args:
+            observador: Instancia de Observador a suscribir.
+        """
+        if observador not in self._observadores:
+            self._observadores.append(observador)
+
+    def desuscribir(self, observador) -> None:
+        """
+        Elimina un Observador de la lista de notificaciones.
+
+        Args:
+            observador: Instancia de Observador a desuscribir.
+        """
+        if observador in self._observadores:
+            self._observadores.remove(observador)
+
+    def notificar(self) -> None:
+        """
+        Notifica a todos los Observadores suscritos del cambio de estado.
+        Cada observador recibe una llamada a actualizar(self).
+        """
+        for obs in list(self._observadores):
+            obs.actualizar(self)
 
     # ------------------------------------------------------------------
     # Patrón Prototype (cliente)

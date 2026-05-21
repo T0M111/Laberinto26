@@ -562,6 +562,48 @@ def demo_prototype():
     print("=" * 60)
 
 
+def demo_observer():
+    """Demuestra el patrón Observer: Juego (Subject) notifica a LaberintoGUI (Observer)."""
+    import os
+    from laberinto_json_builder import LaberintoJsonBuilder
+    from laberinto_gui import LaberintoGUI
+    from personaje import Personaje
+
+    print("\n" + "=" * 60)
+    print("17. Demostración del Patrón Observer (Juego / LaberintoGUI):")
+    print("=" * 60)
+
+    # Construir juego con laberinto desde JSON
+    config = os.path.join(os.path.dirname(__file__), "laberinto_config.json")
+    builder = LaberintoJsonBuilder(config)
+    juego_obs = Juego()
+    Director(builder).procesar()
+    juego_obs.laberinto = builder.fabricarLaberinto()
+    builder.fabricar_entidades(juego_obs)
+
+    # Crear y suscribir la GUI como observadora
+    gui = LaberintoGUI()
+    juego_obs.suscribir(gui)
+    print("\nLaberintoGUI suscrita al Juego como observadora.")
+    print(f"Observadores activos: {len(juego_obs._observadores)}")
+
+    # Un ataque dispara la notificación automáticamente
+    personaje = juego_obs.personaje
+    if juego_obs.bichos:
+        bicho = juego_obs.bichos[0]
+        print(f"\n[Ataque] {bicho.nombre} ataca a {personaje.nombre}...")
+        juego_obs.notificar_ataque(bicho, personaje)
+
+    # Desuscribir y comprobar que la GUI ya no recibe notificaciones
+    juego_obs.desuscribir(gui)
+    print(f"\nGUI desuscrita. Observadores activos: {len(juego_obs._observadores)}")
+    print("Próxima notificación no llegará a la GUI.")
+
+    print("\n" + "=" * 60)
+    print("Fin demostración Observer")
+    print("=" * 60)
+
+
 if __name__ == "__main__":
     main()
     demo_composite()
@@ -570,3 +612,4 @@ if __name__ == "__main__":
     demo_proxy()
     demo_mediator()
     demo_prototype()
+    demo_observer()

@@ -604,6 +604,38 @@ def demo_observer():
     print("=" * 60)
 
 
+def demo_command():
+    """Demuestra el patrón Command: Puerta con comandos Abrir y Cerrar."""
+    from puerta import Puerta
+    from abrir import Abrir
+    from cerrar import Cerrar
+
+    print("\n" + "=" * 60)
+    print("18. Demostración del Patrón Command (Puerta / Abrir / Cerrar):")
+    print("=" * 60)
+
+    puerta = Puerta()
+    print(f"\nPuerta inicial   : {puerta}")
+    print(f"Comandos disponibles: {[type(c).__name__ for c in puerta.comandos]}")
+
+    print("\n[Invoker] Ejecutando Abrir...")
+    puerta.comandos[0].ejecutar()
+    print(f"  Estado puerta  : {puerta}")
+
+    print("\n[Invoker] Ejecutando Cerrar...")
+    puerta.comandos[1].ejecutar()
+    print(f"  Estado puerta  : {puerta}")
+
+    print("\nTambién se pueden crear comandos independientes:")
+    cmd_abrir = Abrir(puerta)
+    cmd_abrir.ejecutar()
+    print(f"  Abrir directo  : {puerta}")
+
+    print("\n" + "=" * 60)
+    print("Fin demostración Command")
+    print("=" * 60)
+
+
 if __name__ == "__main__":
     main()
     demo_composite()
@@ -613,3 +645,4 @@ if __name__ == "__main__":
     demo_mediator()
     demo_prototype()
     demo_observer()
+    demo_command()

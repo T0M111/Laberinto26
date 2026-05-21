@@ -2,6 +2,8 @@
 Clase Puerta - Hoja concreta del mapa (Composite).
 """
 from hoja import Hoja
+from abrir import Abrir
+from cerrar import Cerrar
 
 
 class Puerta(Hoja):
@@ -16,6 +18,8 @@ class Puerta(Hoja):
         self.abierta = False
         self.lado1 = None  # Primera habitacion conectada
         self.lado2 = None  # Segunda habitacion conectada
+        # Patrón Command: comandos disponibles sobre esta puerta
+        self.comandos = [Abrir(self), Cerrar(self)]
     
     def abrir(self):
         """Abre la puerta."""

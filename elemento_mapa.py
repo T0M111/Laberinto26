@@ -21,6 +21,7 @@ class ElementoMapa(ABC):
 
     def __init__(self):
         self.padre = None  # Referencia al Contenedor padre (Composite)
+        self.comandos = []  # Patrón Command: lista de Comandos asociados (0..*)
 
     def agregar_hijo(self, hijo):
         """Disponible sólo en Contenedor. Las Hojas lanzan error."""

@@ -177,6 +177,7 @@ git pull origin main
 - `v1.5.0` - State (Estado / Vivo / Muerto aplicado al ciclo de vida de Ente)
 - `v1.6.0` - Prototype (LaberintoCuadrado / LaberintoRombiforme; Juego.clonarLaberinto())
 - `v1.7.0` - Observer (Juego como Subject; LaberintoGUI como ConcreteObserver)
+- `v1.8.0` - Command (Abrir / Cerrar sobre Puerta; ElementoMapa con +comandos)
 
 ---
 
@@ -284,3 +285,22 @@ git pull origin main
   - Ficheros modificados:
     - `juego.py`: añadido `self._observadores = []` en `__init__`; métodos `suscribir()`, `desuscribir()`, `notificar()`; `notificar_ataque()` llama `self.notificar()` automáticamente al final de cada ataque
   - `main.py`: añadida `demo_observer()` (sección 17)
+
+- ✅ **Command** (v1.8.0) — extensión Media
+  - Rama: `feature/command`
+  - Patrón: Command
+  - Roles:
+    - Command            : `Comando` (ABC) — `+receptor`; método abstracto `ejecutar()`
+    - ConcreteCommand A  : `Abrir` — `ejecutar()` llama `receptor.abrir()`
+    - ConcreteCommand B  : `Cerrar` — `ejecutar()` llama `receptor.cerrar()`
+    - Receiver           : `Puerta` — posee los métodos `abrir()` y `cerrar()`
+    - Invoker/Client     : `ElementoMapa` — lista `+comandos` (0..*); `Puerta` se auto-registra con Abrir y Cerrar
+  - Nuevos ficheros:
+    - `comando.py`: `Comando(ABC)` con `self.receptor` y método abstracto `ejecutar() -> None`
+    - `abrir.py`: `Abrir(Comando)` — ConcreteCommand que abre la puerta
+    - `cerrar.py`: `Cerrar(Comando)` — ConcreteCommand que cierra la puerta
+    - `test_command.py`: 23 tests (TestComandoAbstracto + TestAbrir + TestCerrar + TestElementoMapaComandos + TestPuertaConComandos)
+  - Ficheros modificados:
+    - `elemento_mapa.py`: añadido `self.comandos = []` en `__init__`
+    - `puerta.py`: importa `Abrir` y `Cerrar`; `__init__` inicializa `self.comandos = [Abrir(self), Cerrar(self)]`
+  - `main.py`: añadida `demo_command()` (sección 18)

@@ -679,6 +679,51 @@ def demo_visitor():
     print("=" * 60)
 
 
+def demo_flyweight():
+    """Demuestra el patrón Flyweight: FactoriaMonedas comparte instancias de Moneda."""
+    from laberinto import Laberinto
+    from habitacion import Habitacion
+    from orientacion import Norte, Sur, Este, Oeste
+    from pared import Pared
+
+    print("\n" + "=" * 60)
+    print("20. Demostración del Patrón Flyweight (Moneda / FactoriaMonedas):")
+    print("=" * 60)
+
+    lab = Laberinto()
+    h1 = Habitacion(1)
+    h2 = Habitacion(2)
+    lab.agregar_habitacion(h1)
+    lab.agregar_habitacion(h2)
+
+    f = lab.factoria_monedas
+
+    # Obtener flyweights: misma instancia para la misma clave
+    oro1 = f.getMoneda("oro")
+    oro2 = f.getMoneda("oro")
+    plata = f.getMoneda("plata")
+    super_m = f.getMoneda("super_moneda")
+
+    print(f"\nFactoria tiene {len(f)} instancias en pool (crea solo una por tipo):")
+    for m in f.monedas:
+        print(f"  {type(m).__name__}: value={m.value}")
+
+    print(f"\noro1 is oro2 (misma instancia): {oro1 is oro2}")
+    print(f"oro1 is plata (instancias distintas): {oro1 is plata}")
+
+    # Estado extrínseco: posicion cambia sin crear nuevos objetos
+    oro1.posicion = h1
+    plata.posicion = h2
+    super_m.posicion = h1
+    print(f"\nEstado extrínseco (posicion) — sin crear objetos nuevos:")
+    for m in f.monedas:
+        print(f"  {m}")
+
+    print("\n" + "=" * 60)
+    print("Fin demostración Flyweight")
+    print("=" * 60)
+
+
 if __name__ == "__main__":
     main()
     demo_composite()
@@ -690,3 +735,4 @@ if __name__ == "__main__":
     demo_observer()
     demo_command()
     demo_visitor()
+    demo_flyweight()

@@ -179,6 +179,7 @@ git pull origin main
 - `v1.7.0` - Observer (Juego como Subject; LaberintoGUI como ConcreteObserver)
 - `v1.8.0` - Command (Abrir / Cerrar sobre Puerta; ElementoMapa con +comandos)
 - `v1.9.0` - Visitor (Visitador ABC; VisitadorContador; +aceptar() en ElementoMapa; nuevo Armario)
+- `v2.0.0` - Flyweight (Moneda ABC; Oro/Plata/SuperMoneda; FactoriaMonedas pool; Laberinto como cliente)
 
 ---
 
@@ -331,3 +332,24 @@ git pull origin main
     - `pared.py`: sobrescribe `aceptar()` — `visitarPared(self)`
     - Subclases concretas (ParedBomba, PuertaFuego, HabitacionCuadrada, etc.) heredan `aceptar()` correctamente sin cambios
   - `main.py`: añadida `demo_visitor()` (sección 19)
+
+- ✅ **Flyweight** (v2.0.0) — extensión Avanzada
+  - Rama: `feature/flyweight`
+  - Patrón: Flyweight (pool de instancias compartidas; separación estado intrínseco / extrínseco)
+  - Roles:
+    - Flyweight          : `Moneda` (ABC) — `+posicion` (estado extrínseco); propiedad abstracta `value`
+    - ConcreteFlyweight A: `Oro` — `value = 10` (estado intrínseco fijo)
+    - ConcreteFlyweight B: `Plata` — `value = 5`
+    - ConcreteFlyweight C: `SuperMoneda` — `value = 50`
+    - FlyweightFactory   : `FactoriaMonedas` — `+monedas` pool (dict); `getMoneda(key)` devuelve la misma instancia para la misma clave
+    - Client             : `Laberinto` — tiene `+factoria_monedas: FactoriaMonedas`; obtiene monedas con `factoria_monedas.getMoneda(key)` y establece `posicion`
+  - Nuevos ficheros:
+    - `moneda.py`: `Moneda(ABC)` con `posicion` (extrínseco) y propiedad abstracta `value` (intrínseco)
+    - `oro.py`: `Oro(Moneda)` — `value = 10`
+    - `plata.py`: `Plata(Moneda)` — `value = 5`
+    - `super_moneda.py`: `SuperMoneda(Moneda)` — `value = 50`
+    - `factoria_monedas.py`: `FactoriaMonedas` con `_pool` dict, `getMoneda(key)`, propiedad `monedas`
+    - `test_flyweight.py`: 30 tests (TestMonedaAbstracta + TestConcreteFlyweights + TestFactoriaMonedas + TestLaberintoClienteFlyweight)
+  - Ficheros modificados:
+    - `laberinto.py`: importa `FactoriaMonedas`; `__init__` crea `self.factoria_monedas = FactoriaMonedas()`
+  - `main.py`: añadida `demo_flyweight()` (sección 20)

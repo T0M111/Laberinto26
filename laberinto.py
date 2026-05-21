@@ -6,9 +6,13 @@ Patrón Prototype:
   - ConcretePrototype A: LaberintoCuadrado   (laberinto_cuadrado.py)
   - ConcretePrototype B: LaberintoRombiforme (laberinto_rombiforme.py)
   - Client             : Juego.clonarLaberinto()
+
+Patrón Flyweight (cliente):
+  - Client             : Laberinto  (posee +factoria_monedas: FactoriaMonedas)
 """
 import copy
 from contenedor import Contenedor
+from factoria_monedas import FactoriaMonedas
 
 
 class Laberinto(Contenedor):
@@ -25,6 +29,7 @@ class Laberinto(Contenedor):
         """Inicializa el laberinto."""
         super().__init__()
         self.habitaciones = {}  # Acceso rápido por número (mantiene compatibilidad)
+        self.factoria_monedas = FactoriaMonedas()  # Patrón Flyweight
 
     def agregar_habitacion(self, habitacion):
         """

@@ -378,8 +378,48 @@ def demo_mediator():
     print("  Bicho y Personaje nunca se llamaron entre sí directamente.")
     print("  Condición de fin: victoria (todos los bichos derrotados).")
 
-    print("\n" + "=" * 60)
+    print("=" * 60)
     print("Fin demostración Mediator")
+    print("=" * 60)
+
+
+def demo_prototype():
+    """Demuestra el patrón Prototype: Juego clona su laberinto."""
+    import os
+    from laberinto_json_builder import LaberintoJsonBuilder
+    from laberinto_cuadrado import LaberintoCuadrado
+    from laberinto_rombiforme import LaberintoRombiforme
+
+    print("\n" + "=" * 60)
+    print("16. Demostración del Patrón Prototype (Juego / Laberinto):")
+    print("=" * 60)
+
+    config = os.path.join(os.path.dirname(__file__), "laberinto_config.json")
+    builder = LaberintoJsonBuilder(config)
+    juego = Juego()
+    Director(builder).procesar()
+    juego.laberinto = builder.fabricarLaberinto()
+
+    print(f"\nLaberinto original : {juego.laberinto}")
+    print(f"Tipo               : {type(juego.laberinto).__name__}")
+
+    clon = juego.clonarLaberinto()
+    print(f"\nClon obtenido      : {clon}")
+    print(f"Tipo del clon      : {type(clon).__name__}")
+    print(f"¿Es el mismo objeto? {juego.laberinto is clon}")
+
+    # Modificar el clon no afecta al original
+    from habitacion_cuadrada import HabitacionCuadrada
+    clon.agregar_habitacion(HabitacionCuadrada(99))
+    print(f"\nTras añadir hab 99 al clon:")
+    print(f"  Original tiene {len(juego.laberinto.habitaciones)} habitaciones")
+    print(f"  Clon tiene     {len(clon.habitaciones)} habitaciones")
+
+    print("\nEl Prototipo (Laberinto) se clona a sí mismo;")
+    print("Juego nunca crea habitaciones manualmente — delega en clone().")
+
+    print("\n" + "=" * 60)
+    print("Fin demostración Prototype")
     print("=" * 60)
 
 
@@ -483,6 +523,45 @@ def demo_proxy():
     print("=" * 60)
 
 
+def demo_prototype():
+    """Demuestra el patrón Prototype: Juego clona su laberinto."""
+    import os
+    from laberinto_json_builder import LaberintoJsonBuilder
+    from laberinto_cuadrado import LaberintoCuadrado
+    from habitacion_cuadrada import HabitacionCuadrada
+
+    print("\n" + "=" * 60)
+    print("16. Demostración del Patrón Prototype (Juego / Laberinto):")
+    print("=" * 60)
+
+    config = os.path.join(os.path.dirname(__file__), "laberinto_config.json")
+    builder = LaberintoJsonBuilder(config)
+    juego_proto = Juego()
+    Director(builder).procesar()
+    juego_proto.laberinto = builder.fabricarLaberinto()
+
+    print(f"\nLaberinto original : {juego_proto.laberinto}")
+    print(f"Tipo               : {type(juego_proto.laberinto).__name__}")
+
+    clon = juego_proto.clonarLaberinto()
+    print(f"\nClon obtenido      : {clon}")
+    print(f"Tipo del clon      : {type(clon).__name__}")
+    print(f"¿Es el mismo objeto? {juego_proto.laberinto is clon}")
+
+    # Modificar el clon no afecta al original
+    clon.agregar_habitacion(HabitacionCuadrada(99))
+    print(f"\nTras añadir hab 99 al clon:")
+    print(f"  Original tiene {len(juego_proto.laberinto.habitaciones)} habitaciones")
+    print(f"  Clon tiene     {len(clon.habitaciones)} habitaciones")
+
+    print("\nEl Prototipo (Laberinto) se clona a sí mismo;")
+    print("Juego.clonarLaberinto() delega en laberinto.clone().")
+
+    print("\n" + "=" * 60)
+    print("Fin demostración Prototype")
+    print("=" * 60)
+
+
 if __name__ == "__main__":
     main()
     demo_composite()
@@ -490,3 +569,4 @@ if __name__ == "__main__":
     demo_bridge()
     demo_proxy()
     demo_mediator()
+    demo_prototype()

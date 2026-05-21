@@ -1,6 +1,13 @@
 """
-Clase Laberinto - Contenedor concreto del mapa (Composite).
+Clase Laberinto - Contenedor concreto del mapa (Composite) y Prototype.
+
+Patrón Prototype:
+  - Prototype          : Laberinto  (define clone())
+  - ConcretePrototype A: LaberintoCuadrado   (laberinto_cuadrado.py)
+  - ConcretePrototype B: LaberintoRombiforme (laberinto_rombiforme.py)
+  - Client             : Juego.clonarLaberinto()
 """
+import copy
 from contenedor import Contenedor
 
 
@@ -9,6 +16,9 @@ class Laberinto(Contenedor):
     Representa el laberinto completo.
     Contenedor de nivel superior: sus hijos directos son Habitacion.
     Extiende Contenedor del patrón Composite.
+
+    Actúa además como Prototype: define clone() que las subclases concretas
+    deben sobrescribir para devolver una copia profunda de sí mismas.
     """
 
     def __init__(self):
@@ -42,6 +52,17 @@ class Laberinto(Contenedor):
             (h for h in self._hijos if hasattr(h, 'numero') and h.numero == numero),
             None
         )
+
+    def clone(self):
+        """
+        Patrón Prototype: devuelve una copia profunda del laberinto.
+        Las subclases ConcretePrototype (LaberintoCuadrado, LaberintoRombiforme)
+        sobrescriben este método para garantizar el tipo correcto.
+
+        Returns:
+            Una copia independiente de este laberinto.
+        """
+        return copy.deepcopy(self)
 
     def __str__(self):
         """Representación en string del laberinto."""

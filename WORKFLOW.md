@@ -175,6 +175,7 @@ git pull origin main
 - `v1.3.0` - Bridge (Forma / HabitacionCuadrada / HabitacionRombiforme)
 - `v1.4.0` - Mediator (Juego coordina Bicho / Personaje a través de Ente)
 - `v1.5.0` - State (Estado / Vivo / Muerto aplicado al ciclo de vida de Ente)
+- `v1.6.0` - Prototype (LaberintoCuadrado / LaberintoRombiforme; Juego.clonarLaberinto())
 
 ---
 
@@ -248,3 +249,22 @@ git pull origin main
     - `bicho.py`: `actuar()` llama `super().actuar()` como guardia State antes de ejecutar Strategy (retorna el bool)
   - Nuevos ficheros:
     - `test_state.py`: 19 tests (TestEstado + TestEnteComoContextoState + TestBichoConStateguard)
+
+- ✅ **Prototype** (v1.6.0) — extensión Básica
+  - Rama: `feature/prototype`
+  - Patrón: Prototype
+  - Roles:
+    - Prototype          : `Laberinto` — define `clone()` usando `copy.deepcopy`
+    - ConcretePrototype A: `LaberintoCuadrado` — sobrescribe `clone()`, devuelve `LaberintoCuadrado`
+    - ConcretePrototype B: `LaberintoRombiforme` — sobrescribe `clone()`, devuelve `LaberintoRombiforme`
+    - Client             : `Juego.clonarLaberinto()` — delega en `self.laberinto.clone()`
+  - Nuevos ficheros:
+    - `laberinto_cuadrado.py`: `LaberintoCuadrado(Laberinto)` con `clone()` y `__str__`
+    - `laberinto_rombiforme.py`: `LaberintoRombiforme(Laberinto)` con `clone()` y `__str__`
+    - `test_prototype.py`: 23 tests (TestLaberintoClone + TestLaberintoCuadradoClone + TestLaberintoRombiformeClone + TestJuegoComoClientePrototype + TestJsonBuilderCreaLaberintosTipados)
+  - Ficheros modificados:
+    - `laberinto.py`: añadido `clone()` (Prototype) e importado `copy`
+    - `juego.py`: añadido `clonarLaberinto()` como método cliente del Prototype
+    - `laberinto_config.json`: añadido campo `"tipo"` en cada laberinto (`laberinto_cuadrado` / `laberinto_rombiforme`)
+    - `laberinto_json_builder.py`: importa `LaberintoCuadrado`/`LaberintoRombiforme`; tabla `_TIPOS_LABERINTO`; primera pasada usa el tipo correcto
+  - `main.py`: añadida `demo_prototype()` (sección 16)

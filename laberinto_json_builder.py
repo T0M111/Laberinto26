@@ -12,6 +12,8 @@ import os
 
 from builder import Builder
 from laberinto import Laberinto
+from laberinto_cuadrado import LaberintoCuadrado
+from laberinto_rombiforme import LaberintoRombiforme
 from habitacion import Habitacion
 from habitacion_cuadrada import HabitacionCuadrada
 from habitacion_rombiforme import HabitacionRombiforme
@@ -30,6 +32,12 @@ _ORIENTACIONES = {
     "noroeste": Noroeste,
     "sureste":  Sureste,
     "suroeste": Suroeste,
+}
+
+_TIPOS_LABERINTO = {
+    "laberinto":            Laberinto,
+    "laberinto_cuadrado":   LaberintoCuadrado,
+    "laberinto_rombiforme": LaberintoRombiforme,
 }
 
 _TIPOS_HABITACION = {
@@ -73,7 +81,9 @@ class LaberintoJsonBuilder(Builder):
         # 1ª pasada: crear todos los Laberinto vacíos indexados por id
         laberintos = {}
         for spec in self._config["laberintos"]:
-            laberintos[spec["id"]] = Laberinto()
+            tipo = spec.get("tipo", "laberinto")
+            lab_cls = _TIPOS_LABERINTO.get(tipo, Laberinto)
+            laberintos[spec["id"]] = lab_cls()
 
         # 2ª pasada: crear habitaciones y lados (pared/puerta/tunel)
         puertas_compartidas = {}  # id_puerta -> Puerta (para compartir entre dos habitaciones)

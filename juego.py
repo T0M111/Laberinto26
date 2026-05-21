@@ -1,5 +1,9 @@
 """
-Clase Juego - Factory Method, Abstract Factory y Mediator.
+Clase Juego - Factory Method, Abstract Factory, Mediator y cliente Prototype.
+
+Patón Prototype (cliente):
+  - Client    : Juego.clonarLaberinto()  — clona el laberinto activo
+  - Prototype : Laberinto.clone()
 
 Patrón Mediator:
   - Mediator   : Juego  (este fichero)
@@ -245,3 +249,23 @@ class Juego:
             print("\n  *** VICTORIA: Todos los bichos han sido derrotados. ***")
             return "victoria"
         return None
+
+    # ------------------------------------------------------------------
+    # Patrón Prototype (cliente)
+    # ------------------------------------------------------------------
+
+    def clonarLaberinto(self):
+        """
+        Patrón Prototype: delega en el laberinto activo su propio clone().
+        Devuelve una copia profunda e independiente del laberinto actual.
+
+        Returns:
+            Nueva instancia del mismo tipo de laberinto con todos sus
+            elementos copiados (habitaciones, puertas, paredes, etc.).
+
+        Raises:
+            ValueError: Si no hay ningún laberinto activo en el juego.
+        """
+        if self.laberinto is None:
+            raise ValueError("No hay laberinto activo que clonar.")
+        return self.laberinto.clone()

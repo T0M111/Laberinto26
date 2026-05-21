@@ -1,8 +1,9 @@
 {
-  "comentario": "Configuración del laberinto con soporte para Proxy (Tunel), Bridge (HabitacionCuadrada/Rombiforme) y Mediator (entidades).",
+  "comentario": "Configuración del laberinto con soporte para Proxy (Tunel), Bridge (HabitacionCuadrada/Rombiforme), Mediator (entidades) y Prototype (LaberintoCuadrado/LaberintoRombiforme).",
   "laberintos": [
     {
       "id": "principal",
+      "tipo": "laberinto_cuadrado",
       "habitaciones": [
         {
           "numero": 1,
@@ -28,6 +29,7 @@
     },
     {
       "id": "secundario",
+      "tipo": "laberinto_rombiforme",
       "habitaciones": [
         {
           "numero": 3,

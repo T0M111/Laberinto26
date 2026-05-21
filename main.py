@@ -636,6 +636,49 @@ def demo_command():
     print("=" * 60)
 
 
+def demo_visitor():
+    """Demuestra el patrón Visitor: VisitadorContador recorre el laberinto."""
+    import os
+    from laberinto_json_builder import LaberintoJsonBuilder
+    from visitador_contador import VisitadorContador
+    from armario import Armario
+    from pared import Pared
+    from puerta import Puerta
+
+    print("\n" + "=" * 60)
+    print("19. Demostración del Patrón Visitor (Laberinto / VisitadorContador):")
+    print("=" * 60)
+
+    # Construir laberinto desde JSON
+    config = os.path.join(os.path.dirname(__file__), "laberinto_config.json")
+    builder = LaberintoJsonBuilder(config)
+    Director(builder).procesar()
+    lab = builder.fabricarLaberinto()
+
+    # Recorrer con el Visitador Contador
+    vc = VisitadorContador()
+    lab.aceptar(vc)
+    print(f"\nLaberinto analizado : {lab}")
+    print(f"Resultado           : {vc}")
+
+    # Añadir un Armario con objetos y recorrer de nuevo
+    armario = Armario("Tesoro")
+    armario.agregar_hijo(Pared())
+    armario.agregar_hijo(Puerta())
+    hab = list(lab.habitaciones.values())[0]
+    hab.agregar_hijo(armario)
+
+    vc2 = VisitadorContador()
+    lab.aceptar(vc2)
+    print(f"\nTras añadir Armario('Tesoro') con Pared + Puerta a hab #{hab.numero}:")
+    print(f"  {vc2}")
+    print(f"  (El Armario propaga la visita a sus hijos sin contarse a sí mismo)")
+
+    print("\n" + "=" * 60)
+    print("Fin demostración Visitor")
+    print("=" * 60)
+
+
 if __name__ == "__main__":
     main()
     demo_composite()
@@ -646,3 +689,4 @@ if __name__ == "__main__":
     demo_prototype()
     demo_observer()
     demo_command()
+    demo_visitor()

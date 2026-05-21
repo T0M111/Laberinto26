@@ -43,6 +43,10 @@ class Puerta(Hoja):
         else:
             print("  La puerta está cerrada.")
 
+    def aceptar(self, visitador) -> None:
+        """Patrón Visitor — doble despacho: llama a visitarPuerta."""
+        visitador.visitarPuerta(self)
+
     def __str__(self):
         """Representación en string de la puerta."""
         estado = "abierta" if self.abierta else "cerrada"

@@ -60,6 +60,15 @@ class Contenedor(ElementoMapa):
         for hijo in self._hijos:
             yield from hijo.recorrer()
 
+    def aceptar(self, visitador) -> None:
+        """
+        Patrón Visitor: propaga la visita a todos los hijos.
+        Los contenedores sin método visitarXxx propio (Laberinto, etc.)
+        usan esta implementación base.
+        """
+        for hijo in self._hijos:
+            hijo.aceptar(visitador)
+
     def entrar(self, alguien):
         """
         El bicho entra en este contenedor (Habitacion/Laberinto).

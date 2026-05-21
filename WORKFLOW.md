@@ -178,6 +178,7 @@ git pull origin main
 - `v1.6.0` - Prototype (LaberintoCuadrado / LaberintoRombiforme; Juego.clonarLaberinto())
 - `v1.7.0` - Observer (Juego como Subject; LaberintoGUI como ConcreteObserver)
 - `v1.8.0` - Command (Abrir / Cerrar sobre Puerta; ElementoMapa con +comandos)
+- `v1.9.0` - Visitor (Visitador ABC; VisitadorContador; +aceptar() en ElementoMapa; nuevo Armario)
 
 ---
 
@@ -304,3 +305,29 @@ git pull origin main
     - `elemento_mapa.py`: añadido `self.comandos = []` en `__init__`
     - `puerta.py`: importa `Abrir` y `Cerrar`; `__init__` inicializa `self.comandos = [Abrir(self), Cerrar(self)]`
   - `main.py`: añadida `demo_command()` (sección 18)
+
+- ✅ **Visitor** (v1.9.0) — extensión Avanzada
+  - Rama: `feature/visitor`
+  - Patrón: Visitor (doble despacho: cada ElementoMapa llama al método visit correspondiente)
+  - Roles:
+    - Visitor            : `Visitador` (ABC) — define `visitarHabitacion()`, `visitarPuerta()`, `visitarPared()`
+    - ConcreteVisitor    : `VisitadorContador` — cuenta elementos por tipo (habitaciones / puertas / paredes)
+    - Element (abstract) : `ElementoMapa` — nuevo método abstracto `+aceptar(Visitor)`
+    - ConcreteElement    : `Habitacion` — `aceptar()` llama `visitarHabitacion(self)` y propaga a los hijos
+    - ConcreteElement    : `Puerta` — `aceptar()` llama `visitarPuerta(self)` (doble despacho)
+    - ConcreteElement    : `Pared` — `aceptar()` llama `visitarPared(self)` (doble despacho)
+    - Container base     : `Contenedor` — `aceptar()` generico: itera hijos (usado por Laberinto, Tunel, Armario)
+    - Nuevo Contenedor   : `Armario` — `aceptar()` propaga a hijos sin llamar a visitarArmario (según diagrama UML)
+  - Nuevos ficheros:
+    - `visitador.py`: `Visitador(ABC)` con los tres métodos abstractos de visita
+    - `visitador_contador.py`: `VisitadorContador(Visitador)` — contadores de habitaciones / puertas / paredes
+    - `armario.py`: `Armario(Contenedor)` — nuevo contenedor con `aceptar()` de propagación y `entrar()`
+    - `test_visitor.py`: 25 tests (TestVisitadorAbstracto + TestDobleDespacho + TestHabitacionAceptar + TestArmarioAceptar + TestVisitadorContador + TestContenedorAceptarPropagacion)
+  - Ficheros modificados:
+    - `elemento_mapa.py`: añadido método abstracto `aceptar(visitador) -> None`
+    - `contenedor.py`: añadida implementación base `aceptar()` — itera `_hijos` (heredada por Laberinto, Tunel, Armario)
+    - `habitacion.py`: sobrescribe `aceptar()` — `visitarHabitacion(self)` + propagación a hijos
+    - `puerta.py`: sobrescribe `aceptar()` — `visitarPuerta(self)`
+    - `pared.py`: sobrescribe `aceptar()` — `visitarPared(self)`
+    - Subclases concretas (ParedBomba, PuertaFuego, HabitacionCuadrada, etc.) heredan `aceptar()` correctamente sin cambios
+  - `main.py`: añadida `demo_visitor()` (sección 19)

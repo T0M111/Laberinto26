@@ -45,6 +45,16 @@ class ElementoMapa(ABC):
         """
         pass
 
+    @abstractmethod
+    def aceptar(self, visitador) -> None:
+        """
+        Patrón Visitor — doble despacho.
+        Cada subclase concreta llama al método visit correspondiente
+        del visitador (p.ej. visitador.visitarPuerta(self)).
+        Los contenedores además propagan la visita a sus hijos.
+        """
+        pass
+
     def __iter__(self):
         """
         Iterador externo: permite usar `for elem in elemento_mapa`.

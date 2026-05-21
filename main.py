@@ -765,6 +765,51 @@ def demo_memento():
     print("=" * 60)
 
 
+def demo_chain():
+    """Demuestra el patrón Chain of Responsibility: Juego lanza cerrarPuertas() por la cadena."""
+    from juego import Juego
+    from puerta import Puerta
+    from pared import Pared
+
+    print("\n" + "=" * 60)
+    print("22. Demostración del Patrón Chain of Responsibility (cerrarPuertas):")
+    print("=" * 60)
+
+    # Construir cadena: Pared → Puerta1 → Pared → Puerta2
+    pared1 = Pared()
+    puerta1 = Puerta()
+    pared2 = Pared()
+    puerta2 = Puerta()
+
+    puerta1.abrir()
+    puerta2.abrir()
+
+    pared1.sucesor = puerta1
+    puerta1.sucesor = pared2
+    pared2.sucesor = puerta2
+    # puerta2.sucesor = None  (por defecto)
+
+    print(f"\nEstado inicial — {puerta1}  |  {puerta2}")
+
+    # Juego es el Client: apunta al primer elemento de la cadena
+    juego = Juego()
+    juego.handler = pared1
+
+    print("Lanzando juego.cerrarPuertas() ...")
+    print("  Pared1  → pasa al sucesor")
+    print("  Puerta1 → se cierra, pasa al sucesor")
+    print("  Pared2  → pasa al sucesor")
+    print("  Puerta2 → se cierra, fin de la cadena")
+
+    juego.cerrarPuertas()
+
+    print(f"\nEstado final  — {puerta1}  |  {puerta2}")
+
+    print("\n" + "=" * 60)
+    print("Fin demostración Chain of Responsibility")
+    print("=" * 60)
+
+
 if __name__ == "__main__":
     main()
     demo_composite()
@@ -778,3 +823,4 @@ if __name__ == "__main__":
     demo_visitor()
     demo_flyweight()
     demo_memento()
+    demo_chain()

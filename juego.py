@@ -43,6 +43,8 @@ class Juego:
         self.bichos = []       # Colleague A: lista de Bichos activos
         # --- Observer (Subject) ---
         self._observadores = []  # lista de Observador suscritos
+        # --- Chain of Responsibility (Client) ---
+        self.handler = None   # primer ElementoMapa de la cadena (+handler 1)
     
     def obtener_habitacion(self, numero):
         """
@@ -311,3 +313,20 @@ class Juego:
         if self.laberinto is None:
             raise ValueError("No hay laberinto activo que clonar.")
         return self.laberinto.clone()
+
+    # ------------------------------------------------------------------
+    # Patrón Chain of Responsibility (Cliente)
+    # ------------------------------------------------------------------
+
+    def cerrarPuertas(self) -> None:
+        """
+        Patrón Chain of Responsibility — lanza la petición en la cadena.
+        Delega en el primer ElementoMapa de la cadena (+handler).
+        Cada Puerta de la cadena responde (cierra), las Paredes pasan.
+
+        Raises:
+            ValueError: Si no hay ningún handler configurado.
+        """
+        if self.handler is None:
+            raise ValueError("No hay handler configurado para cerrarPuertas.")
+        self.handler.cerrarPuertas()

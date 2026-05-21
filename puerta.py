@@ -43,6 +43,14 @@ class Puerta(Hoja):
         else:
             print("  La puerta está cerrada.")
 
+    def cerrarPuertas(self) -> None:
+        """
+        Patrón Chain of Responsibility — ConcreteHandler que responde.
+        Cierra esta puerta y continúa la cadena pasando al sucesor.
+        """
+        self.cerrar()
+        super().cerrarPuertas()  # continuar la cadena
+
     def aceptar(self, visitador) -> None:
         """Patrón Visitor — doble despacho: llama a visitarPuerta."""
         visitador.visitarPuerta(self)

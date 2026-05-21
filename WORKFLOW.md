@@ -181,6 +181,7 @@ git pull origin main
 - `v1.9.0` - Visitor (Visitador ABC; VisitadorContador; +aceptar() en ElementoMapa; nuevo Armario)
 - `v2.0.0` - Flyweight (Moneda ABC; Oro/Plata/SuperMoneda; FactoriaMonedas pool; Laberinto como cliente)
 - `v2.1.0` - Memento (Laberinto como Originator; Memento snapshot; Caretaker custodia +memento)
+- `v2.2.0` - Chain of Responsibility (ElementoMapa +sucesor; Pared pasa; Puerta responde; Juego +handler)
 
 ---
 
@@ -369,3 +370,19 @@ git pull origin main
   - Ficheros modificados:
     - `laberinto.py`: importa `Memento`; añadida property `estado`, métodos `crearMemento()` y `cargarPartida(m)`
   - `main.py`: añadida `demo_memento()` (sección 21)
+
+- ✅ **Chain of Responsibility** (v2.2.0) — extensión Avanzada
+  - Rama: `feature/chain`
+  - Patrón: Chain of Responsibility (la petición se pasa entre ElementoMapas hasta que el destinatario responde)
+  - Roles:
+    - Handler (abstract) : `ElementoMapa` — `+sucesor`; `cerrarPuertas()` por defecto pasa al sucesor
+    - ConcreteHandler que maneja : `Puerta` — `cerrarPuertas()` cierra la puerta y continúa la cadena
+    - ConcreteHandler que pasa   : `Pared`  — hereda el comportamiento base (sin override)
+    - Client             : `Juego` — `+handler` (1); `cerrarPuertas()` lanza la petición en el primer handler
+  - Nuevos ficheros:
+    - `test_chain.py`: 27 tests (TestElementoMapaSucesor + TestParedCerrarPuertas + TestPuertaCerrarPuertas + TestCadenasMixtas + TestJuegoClienteCoR + TestCicloCompleto)
+  - Ficheros modificados:
+    - `elemento_mapa.py`: añadido `self.sucesor = None`; añadido `cerrarPuertas()` base (pasa al sucesor)
+    - `puerta.py`: añadido `cerrarPuertas()` — `self.cerrar()` + `super().cerrarPuertas()`
+    - `juego.py`: añadido `self.handler = None`; añadido `cerrarPuertas()` (lanza la cadena desde `self.handler`)
+  - `main.py`: añadida `demo_chain()` (sección 22)

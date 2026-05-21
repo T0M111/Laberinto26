@@ -20,8 +20,9 @@ class ElementoMapa(ABC):
     """
 
     def __init__(self):
-        self.padre = None  # Referencia al Contenedor padre (Composite)
-        self.comandos = []  # Patrón Command: lista de Comandos asociados (0..*)
+        self.padre = None     # Referencia al Contenedor padre (Composite)
+        self.comandos = []    # Patrón Command: lista de Comandos asociados (0..*)
+        self.sucesor = None   # Patrón Chain of Responsibility: siguiente handler
 
     def agregar_hijo(self, hijo):
         """Disponible sólo en Contenedor. Las Hojas lanzan error."""
@@ -77,6 +78,16 @@ class ElementoMapa(ABC):
         mueve en Contenedor/Puerta gracias al polimorfismo.
         """
         self.entrar(alguien)
+
+    def cerrarPuertas(self) -> None:
+        """
+        Patrón Chain of Responsibility.
+        Comportamiento por defecto: pasar la petición al sucesor de la cadena.
+        Pared hereda este comportamiento directamente (no responde a la acción).
+        Puerta la sobrescribe para cerrar la puerta y luego continuar la cadena.
+        """
+        if self.sucesor is not None:
+            self.sucesor.cerrarPuertas()
 
     @abstractmethod
     def __str__(self):

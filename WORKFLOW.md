@@ -171,3 +171,43 @@ git pull origin main
 - `v0.9.0` - Builder
 - `v1.0.0` - Adapter
 - `v1.1.0` - Navegación del Laberinto
+- `v1.2.0` - Proxy (Tunel)
+- `v1.3.0` - Bridge (Forma / HabitacionCuadrada / HabitacionRombiforme)
+
+---
+
+## Extensiones de Evaluación
+
+- ✅ **Proxy** (v1.2.0) — extensión Media
+  - Rama: `feature/proxy`
+  - Patrón: Proxy
+  - Roles:
+    - Subject: `ElementoMapa` (interfaz `entrar()`)
+    - RealSubject: `Laberinto`
+    - Proxy: `Tunel`
+  - Nuevos ficheros:
+    - `tunel.py`: `Tunel(Contenedor)` — proxy que teletransporta al ente a la primera habitación del laberinto destino
+    - `laberinto_config.json`: configuración JSON con dos laberintos y un túnel entre ellos
+    - `laberinto_json_builder.py`: `LaberintoJsonBuilder(Builder)` — builder basado en JSON que soporta `pared`, `puerta`, `tunel`
+    - `test_tunel.py`: 13 tests (Tunel + LaberintoJsonBuilder)
+  - `main.py`: añadida `demo_proxy()` (sección 13)
+
+- ✅ **Bridge** (v1.3.0) — extensión Media
+  - Rama: `feature/bridge`
+  - Patrón: Bridge
+  - Roles:
+    - Abstraction: `Contenedor` (recibe `+forma: Forma`)
+    - Refined Abstractions: `HabitacionCuadrada`, `HabitacionRombiforme`
+    - Implementor: `Forma` (abstracta, `+num`, `+orientaciones`)
+    - Concrete Implementors: `Cuadrado` (N/S/E/O), `Rombo` (NE/NO/SE/SO)
+  - Nuevos ficheros:
+    - `forma.py`: `Forma` (ABC), `Cuadrado`, `Rombo`
+    - `habitacion_cuadrada.py`: `HabitacionCuadrada(Habitacion)` — inicializa sus 4 lados cardinales con Pared
+    - `habitacion_rombiforme.py`: `HabitacionRombiforme(Habitacion)` — inicializa sus 4 lados diagonales con Pared
+    - `test_bridge.py`: 24 tests (Forma + HabitacionCuadrada + HabitacionRombiforme + integración JSON)
+  - Ficheros modificados:
+    - `orientacion.py`: añadidas `Noreste`, `Noroeste`, `Sureste`, `Suroeste`
+    - `contenedor.py`: añadido `self.forma = None` en `__init__`
+    - `laberinto_config.json`: habitaciones 1 y 2 son `habitacion_cuadrada`; habitación 3 es `habitacion_rombiforme`
+    - `laberinto_json_builder.py`: soporta `habitacion`, `habitacion_cuadrada`, `habitacion_rombiforme`; soporta orientaciones diagonales
+  - `main.py`: añadida `demo_bridge()` (sección 14)

@@ -1,11 +1,12 @@
 {
-  "comentario": "Configuración del laberinto con soporte para el patrón Proxy (Tunel).",
+  "comentario": "Configuración del laberinto con soporte para Proxy (Tunel) y Bridge (HabitacionCuadrada/Rombiforme).",
   "laberintos": [
     {
       "id": "principal",
       "habitaciones": [
         {
           "numero": 1,
+          "tipo": "habitacion_cuadrada",
           "lados": {
             "norte": { "tipo": "tunel", "destino": "secundario" },
             "sur":   { "tipo": "pared" },
@@ -15,6 +16,7 @@
         },
         {
           "numero": 2,
+          "tipo": "habitacion_cuadrada",
           "lados": {
             "norte": { "tipo": "pared" },
             "sur":   { "tipo": "pared" },
@@ -29,11 +31,12 @@
       "habitaciones": [
         {
           "numero": 3,
+          "tipo": "habitacion_rombiforme",
           "lados": {
-            "norte": { "tipo": "pared" },
-            "sur":   { "tipo": "pared" },
-            "este":  { "tipo": "pared" },
-            "oeste": { "tipo": "pared" }
+            "noreste":  { "tipo": "pared" },
+            "noroeste": { "tipo": "pared" },
+            "sureste":  { "tipo": "pared" },
+            "suroeste": { "tipo": "pared" }
           }
         }
       ]

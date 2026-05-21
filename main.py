@@ -330,6 +330,61 @@ def demo_iterator():
     print("=" * 60)
 
 
+def demo_bridge():
+    """Demuestra el patrón Bridge: Forma desacoplada de Habitacion."""
+    import os
+    from forma import Cuadrado, Rombo
+    from habitacion_cuadrada import HabitacionCuadrada
+    from habitacion_rombiforme import HabitacionRombiforme
+    from laberinto_json_builder import LaberintoJsonBuilder
+
+    print("\n" + "=" * 60)
+    print("14. Demostración del Patrón Bridge (Forma / Habitacion):")
+    print("=" * 60)
+
+    # --- Implementors independientes ---
+    print("\nImplementors (Forma):")
+    print(f"  {Cuadrado()}")
+    print(f"  {Rombo()}")
+
+    # --- Refined Abstractions directas ---
+    print("\nRefined Abstractions creadas directamente:")
+    hc = HabitacionCuadrada(10)
+    hr = HabitacionRombiforme(11)
+    print(f"  {hc}  -> forma: {hc.forma}")
+    print(f"  {hr}  -> forma: {hr.forma}")
+
+    print(f"\n  Lados de {hc}:")
+    for ori, elem in hc.orientaciones.items():
+        print(f"    {ori}: {elem}")
+
+    print(f"\n  Lados de {hr}:")
+    for ori, elem in hr.orientaciones.items():
+        print(f"    {ori}: {elem}")
+
+    # --- Construcción desde JSON (Builder) ---
+    print("\nConstrucción desde laberinto_config.json (Builder + Bridge):")
+    config = os.path.join(os.path.dirname(__file__), "laberinto_config.json")
+    lab = Director(LaberintoJsonBuilder(config)).procesar()
+
+    hab1 = lab.obtener_habitacion(1)
+    print(f"  Habitación 1 del JSON: {hab1}  [tipo: {type(hab1).__name__}]")
+    tunel = hab1.obtener_lado(Norte())
+    hab3 = tunel.laberinto.obtener_habitacion(3)
+    print(f"  Habitación 3 (laberinto secundario): {hab3}  [tipo: {type(hab3).__name__}]")
+    print(f"  Forma de hab3: {hab3.forma}")
+
+    print("\nEl Bridge desacopla la jerarquía de Habitacion de la de Forma:")
+    print("  Abstraction  : Contenedor (+forma)")
+    print("  Refined Abs. : HabitacionCuadrada, HabitacionRombiforme")
+    print("  Implementor  : Forma")
+    print("  Conc. Impl.  : Cuadrado (N/S/E/O), Rombo (NE/NO/SE/SO)")
+
+    print("\n" + "=" * 60)
+    print("Fin demostración Bridge")
+    print("=" * 60)
+
+
 def demo_proxy():
     """Demuestra el patrón Proxy: Tunel como proxy de Laberinto."""
     import os
@@ -379,4 +434,5 @@ if __name__ == "__main__":
     main()
     demo_composite()
     demo_iterator()
+    demo_bridge()
     demo_proxy()

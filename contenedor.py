@@ -16,6 +16,7 @@ class Contenedor(ElementoMapa):
     def __init__(self):
         super().__init__()
         self._hijos = []  # +hijos: List[ElementoMapa]
+        self.forma = None  # +forma: Forma  [Bridge, cardinalidad 0..1; None si sin forma definida]
 
     # --- Gestión de hijos ---
 

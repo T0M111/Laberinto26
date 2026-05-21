@@ -1,25 +1,31 @@
 """
-Clase Bicho - Entidad del laberinto con comportamiento variable.
-Utiliza el patrón Strategy mediante objetos Modo.
+Clase Bicho - Colleague concreto A del patrón Mediator.
+Hereda de Ente y utiliza el patrón Strategy mediante objetos Modo.
 """
 from modo import Modo
+from ente import Ente
 
 
-class Bicho:
+class Bicho(Ente):
     """
+    Colleague A del patrón Mediator.
     Representa un bicho (enemigo) dentro del laberinto.
     Su comportamiento está delegado en un objeto Modo (Strategy),
     que puede cambiar en tiempo de ejecución.
+    Hereda de Ente: vidas, poder, estado y referencia al Mediador (_juego).
     """
 
-    def __init__(self, nombre, modo: Modo):
+    def __init__(self, nombre, modo: Modo, vidas: int = 3, poder: int = 1):
         """
-        Inicializa un Bicho con un nombre y un modo de comportamiento.
+        Inicializa un Bicho con un nombre, modo de comportamiento y estadísticas.
 
         Args:
             nombre: Nombre identificador del bicho.
-            modo: Instancia de Modo que define su comportamiento actual.
+            modo:   Instancia de Modo que define su comportamiento actual.
+            vidas:  Puntos de vida (por defecto 3).
+            poder:  Daño que inflige por ataque (por defecto 1).
         """
+        super().__init__(vidas=vidas, poder=poder)
         self.nombre = nombre
         self.modo = modo
         self.posicion = None  # Habitacion donde se encuentra actualmente
@@ -35,11 +41,17 @@ class Bicho:
 
     def actuar(self):
         """
-        Delega la acción al modo actual (Strategy).
-        El método actua() del Modo es un Template Method que llama
-        a ataca() y duerme() según la subclase concreta.
+        Patrón State: comprueba primero si el ente puede actuar
+        (super().actuar() → estado.puedeActuar()). Si puede, delega
+        el comportamiento en el modo actual (Strategy).
+
+        Returns:
+            True si el bicho pudo actuar, False si estaba muerto.
         """
-        self.modo.actua(self)
+        puede = super().actuar()
+        if puede:
+            self.modo.actua(self)
+        return puede
 
     def cambiarModo(self):
         """

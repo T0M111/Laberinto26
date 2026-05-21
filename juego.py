@@ -1,6 +1,12 @@
 """
-Clase Juego - Implementa los patrones Factory Method y Abstract Factory.
-Usa el patrón Strategy (Orientacion) para los lados de las habitaciones.
+Clase Juego - Factory Method, Abstract Factory y Mediator.
+
+Patrón Mediator:
+  - Mediator   : Juego  (este fichero)
+  - ColleagueA : Bicho
+  - ColleagueB : Personaje
+  Juego coordina las interacciones entre Bichos y Personaje sin que
+  éstos se conozcan directamente, y verifica las condiciones de fin de juego.
 """
 from pared import Pared
 from puerta import Puerta
@@ -20,8 +26,11 @@ class Juego:
     """
 
     def __init__(self):
-        """Inicializa el Juego sin laberinto activo."""
+        """Inicializa el Juego sin laberinto ni entidades activas."""
         self.laberinto = None
+        # --- Mediator ---
+        self.personaje = None  # Colleague B: el Personaje del jugador
+        self.bichos = []       # Colleague A: lista de Bichos activos
     
     def obtener_habitacion(self, numero):
         """
@@ -127,3 +136,112 @@ class Juego:
 
         self.laberinto = laberinto
         return laberinto
+
+    # =========================================================================
+    # Patrón Mediator — coordinación entre Bicho y Personaje
+    # =========================================================================
+
+    def registrar_personaje(self, personaje):
+        """
+        Registra el Personaje como Colleague B del Mediador.
+        Establece la referencia bidireccional (_juego).
+
+        Args:
+            personaje: Instancia de Personaje.
+        """
+        self.personaje = personaje
+        personaje._juego = self
+
+    def registrar_bicho(self, bicho):
+        """
+        Registra un Bicho como Colleague A del Mediador.
+        Establece la referencia bidireccional (_juego).
+
+        Args:
+            bicho: Instancia de Bicho.
+        """
+        self.bichos.append(bicho)
+        bicho._juego = self
+
+    def notificar_ataque(self, atacante, objetivo):
+        """
+        Mediador: aplica el daño de 'atacante' a 'objetivo' y comprueba
+        las condiciones de fin de juego.
+        Ningún Colleague llama directamente al otro; todo pasa por aquí.
+
+        Args:
+            atacante: Ente que realiza el ataque.
+            objetivo: Ente que recibe el daño.
+
+        Returns:
+            Resultado de verificar_fin_juego() ('victoria'|'derrota'|None).
+        """
+        objetivo.recibir_danio(atacante.poder)
+        print(f"  {atacante.nombre} ataca a {objetivo.nombre}! "
+              f"[{objetivo.nombre}: {objetivo.vidas} vidas, estado: {objetivo.estado}]")
+        return self.verificar_fin_juego()
+
+    def turno_bicho(self, bicho):
+        """
+        Mediador: orquesta el turno de un Bicho.
+        Si el Bicho y el Personaje están en la misma habitación → ataca.
+        En caso contrario → el Bicho actúa según su Modo (se mueve).
+
+        Args:
+            bicho: El Bicho cuyo turno se ejecuta.
+
+        Returns:
+            Resultado de verificar_fin_juego() si hubo ataque, si no None.
+        """
+        if not bicho.esta_vivo():
+            print(f"  {bicho.nombre} está eliminado y no puede actuar.")
+            return None
+        misma_habitacion = (
+            self.personaje is not None
+            and self.personaje.esta_vivo()
+            and bicho.posicion is not None
+            and bicho.posicion is self.personaje.posicion
+        )
+        if misma_habitacion:
+            print(f"  ¡{bicho.nombre} encuentra al Personaje en {bicho.posicion}!")
+            return self.notificar_ataque(bicho, self.personaje)
+        else:
+            bicho.actuar()
+            return None
+
+    def turno_personaje(self, bicho_objetivo=None):
+        """
+        Mediador: orquesta el turno del Personaje.
+        Si se especifica un bicho objetivo vivo → el personaje lo ataca.
+
+        Args:
+            bicho_objetivo: Bicho a atacar (opcional).
+
+        Returns:
+            Resultado de verificar_fin_juego() si hubo ataque, si no None.
+        """
+        if self.personaje is None or not self.personaje.esta_vivo():
+            print("  El personaje no puede actuar.")
+            return None
+        if bicho_objetivo is not None and bicho_objetivo.esta_vivo():
+            return self.notificar_ataque(self.personaje, bicho_objetivo)
+        print(f"  {self.personaje.nombre} no tiene objetivo en rango.")
+        return None
+
+    def verificar_fin_juego(self):
+        """
+        Mediador: comprueba las condiciones de fin de juego.
+
+        Condición de DERROTA : el Personaje está Muerto.
+        Condición de VICTORIA: todos los Bichos están Muertos.
+
+        Returns:
+            'derrota' | 'victoria' | None (juego continúa).
+        """
+        if self.personaje is not None and not self.personaje.esta_vivo():
+            print("\n  *** GAME OVER: El personaje ha sido derrotado. ***")
+            return "derrota"
+        if self.bichos and all(not b.esta_vivo() for b in self.bichos):
+            print("\n  *** VICTORIA: Todos los bichos han sido derrotados. ***")
+            return "victoria"
+        return None

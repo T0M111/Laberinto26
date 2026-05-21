@@ -173,6 +173,8 @@ git pull origin main
 - `v1.1.0` - Navegación del Laberinto
 - `v1.2.0` - Proxy (Tunel)
 - `v1.3.0` - Bridge (Forma / HabitacionCuadrada / HabitacionRombiforme)
+- `v1.4.0` - Mediator (Juego coordina Bicho / Personaje a través de Ente)
+- `v1.5.0` - State (Estado / Vivo / Muerto aplicado al ciclo de vida de Ente)
 
 ---
 
@@ -211,3 +213,38 @@ git pull origin main
     - `laberinto_config.json`: habitaciones 1 y 2 son `habitacion_cuadrada`; habitación 3 es `habitacion_rombiforme`
     - `laberinto_json_builder.py`: soporta `habitacion`, `habitacion_cuadrada`, `habitacion_rombiforme`; soporta orientaciones diagonales
   - `main.py`: añadida `demo_bridge()` (sección 14)
+
+- ✅ **Mediator** (v1.4.0) — extensión Media
+  - Rama: `feature/mediator`
+  - Patrón: Mediator
+  - Roles:
+    - Mediador: `Juego` — coordina ataques, condiciones de fin de juego y registro de entidades
+    - Colegas: `Bicho` y `Personaje` — se comunican **solo a través de Juego**, nunca entre sí
+    - Colleague Base: `Ente` (abstracta) — encapsula `vidas`, `poder`, `estado` y referencia `_juego`
+    - State: `Estado` (abstracta), `Vivo`, `Muerto` — patrón State para el ciclo de vida del Ente
+  - Nuevos ficheros:
+    - `estado_ente.py`: `Estado` (ABC), `Vivo`, `Muerto` — patrón State (refactorizado en v1.5.0 como patrón independiente)
+    - `ente.py`: `Ente` (ABC) — clase base Colega con `vidas`, `poder`, `estado`, `_juego`, `recibir_danio()`, `esta_vivo()`
+    - `test_mediator.py`: 40 tests (Estado/State + Ente + Bicho/Personaje como Ente + Juego Mediador + fabricar_entidades)
+  - Ficheros modificados:
+    - `bicho.py`: `Bicho(Ente)` — ahora hereda de `Ente`; constructor backwards-compatible `(nombre, modo, vidas=3, poder=1)`
+    - `personaje.py`: `Personaje(Ente)` — ahora hereda de `Ente`; `varita` ahora opcional; `(nombre, varita=None, vidas=5, poder=2)`
+    - `juego.py`: añadidos `self.personaje`, `self.bichos`; métodos Mediador: `registrar_personaje()`, `registrar_bicho()`, `notificar_ataque()`, `turno_bicho()`, `turno_personaje()`, `verificar_fin_juego()`
+    - `laberinto_config.json`: añadida sección `"entidades"` con Heroe, Goblin y Troll
+    - `laberinto_json_builder.py`: añadido método `fabricar_entidades(juego)` que lee la sección JSON y registra las entidades en el Juego
+  - `main.py`: añadida `demo_mediator()` (sección 15)
+
+- ✅ **State** (v1.5.0) — extensión Básica
+  - Rama: `feature/state`
+  - Patrón: State
+  - Roles:
+    - Context        : `Ente` — tiene `+estado: Estado` y delega `actuar()` en `estado.puedeActuar()`
+    - State          : `Estado` (ABC) — define `puedeActuar() -> bool`
+    - ConcreteState A: `Vivo` — `puedeActuar()` devuelve `True`
+    - ConcreteState B: `Muerto` — `puedeActuar()` devuelve `False`
+  - Ficheros modificados:
+    - `estado_ente.py`: renombrado `EstadoEnte` → `Estado`; renombrado `esta_vivo()` → `puedeActuar()`
+    - `ente.py`: importa `Estado`; `actuar()` delega en `self.estado.puedeActuar()`; `esta_vivo()` como alias de conveniencia
+    - `bicho.py`: `actuar()` llama `super().actuar()` como guardia State antes de ejecutar Strategy (retorna el bool)
+  - Nuevos ficheros:
+    - `test_state.py`: 19 tests (TestEstado + TestEnteComoContextoState + TestBichoConStateguard)

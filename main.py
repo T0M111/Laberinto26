@@ -330,6 +330,59 @@ def demo_iterator():
     print("=" * 60)
 
 
+def demo_mediator():
+    """Demuestra el patrón Mediator: Juego coordina Bicho y Personaje."""
+    import os
+    from laberinto_json_builder import LaberintoJsonBuilder
+
+    print("\n" + "=" * 60)
+    print("15. Demostración del Patrón Mediator (Juego / Bicho / Personaje):")
+    print("=" * 60)
+
+    # --- Construir laberinto y entidades desde JSON ---
+    config = os.path.join(os.path.dirname(__file__), "laberinto_config.json")
+    builder = LaberintoJsonBuilder(config)
+    juego_med = Juego()
+    Director(builder).procesar()
+    builder.fabricar_entidades(juego_med)
+
+    personaje = juego_med.personaje
+    goblin = juego_med.bichos[0]
+    troll  = juego_med.bichos[1]
+
+    print(f"\nPersonaje  : {personaje.nombre} | vidas={personaje.vidas} | poder={personaje.poder}")
+    for b in juego_med.bichos:
+        print(f"Bicho      : {b.nombre} | vidas={b.vidas} | poder={b.poder} | modo={b.modo}")
+
+    # --- Colocar al goblin y al personaje en la misma habitación ---
+    lab = builder.fabricarLaberinto()
+    hab1 = lab.obtener_habitacion(1)
+    goblin.posicion   = hab1
+    personaje.posicion = hab1
+
+    print("\n--- Turno 1: Goblin ataca al Personaje (misma habitación) ---")
+    juego_med.turno_bicho(goblin)
+
+    print("\n--- Turno 2: Personaje contraataca al Goblin ---")
+    juego_med.turno_personaje(goblin)
+
+    print("\n--- Turno 3: Personaje elimina al Goblin ---")
+    resultado = juego_med.turno_personaje(goblin)
+
+    print("\n--- Turno 4: Personaje ataca al Troll (varios turnos hasta victoria) ---")
+    resultado = None
+    while resultado is None and troll.esta_vivo():
+        resultado = juego_med.turno_personaje(troll)
+
+    print("\nEl Mediador (Juego) coordinó todas las interacciones:")
+    print("  Bicho y Personaje nunca se llamaron entre sí directamente.")
+    print("  Condición de fin: victoria (todos los bichos derrotados).")
+
+    print("\n" + "=" * 60)
+    print("Fin demostración Mediator")
+    print("=" * 60)
+
+
 def demo_bridge():
     """Demuestra el patrón Bridge: Forma desacoplada de Habitacion."""
     import os
@@ -436,3 +489,4 @@ if __name__ == "__main__":
     demo_iterator()
     demo_bridge()
     demo_proxy()
+    demo_mediator()

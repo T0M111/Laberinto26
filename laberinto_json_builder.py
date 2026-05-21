@@ -155,3 +155,42 @@ class LaberintoJsonBuilder(Builder):
             return Tunel(laberintos[destino_id])
 
         raise ValueError(f"Tipo de elemento desconocido en el JSON: '{tipo}'")
+
+    def fabricar_entidades(self, juego):
+        """
+        Lee la sección 'entidades' del JSON y registra el Personaje y los Bichos
+        en el Juego (Mediador).  Si la sección no existe, no hace nada.
+
+        Args:
+            juego: Instancia de Juego que actuará como Mediador.
+        """
+        entidades = self._config.get("entidades")
+        if not entidades:
+            return
+
+        from personaje import Personaje
+        from bicho import Bicho
+        from modo import Agresivo, Perezoso
+
+        _modos = {"agresivo": Agresivo, "perezoso": Perezoso}
+
+        # Personaje
+        p_spec = entidades.get("personaje")
+        if p_spec:
+            personaje = Personaje(
+                nombre=p_spec["nombre"],
+                vidas=p_spec.get("vidas", 5),
+                poder=p_spec.get("poder", 2),
+            )
+            juego.registrar_personaje(personaje)
+
+        # Bichos
+        for b_spec in entidades.get("bichos", []):
+            modo_cls = _modos.get(b_spec.get("modo", "perezoso"), Perezoso)
+            bicho = Bicho(
+                nombre=b_spec["nombre"],
+                modo=modo_cls(),
+                vidas=b_spec.get("vidas", 3),
+                poder=b_spec.get("poder", 1),
+            )
+            juego.registrar_bicho(bicho)

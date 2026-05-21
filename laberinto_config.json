@@ -1,5 +1,5 @@
 {
-  "comentario": "Configuración del laberinto con soporte para Proxy (Tunel) y Bridge (HabitacionCuadrada/Rombiforme).",
+  "comentario": "Configuración del laberinto con soporte para Proxy (Tunel), Bridge (HabitacionCuadrada/Rombiforme) y Mediator (entidades).",
   "laberintos": [
     {
       "id": "principal",
@@ -42,5 +42,12 @@
       ]
     }
   ],
-  "laberinto_raiz": "principal"
+  "laberinto_raiz": "principal",
+  "entidades": {
+    "personaje": { "nombre": "Heroe", "vidas": 5, "poder": 2 },
+    "bichos": [
+      { "nombre": "Goblin", "vidas": 3, "poder": 1, "modo": "agresivo" },
+      { "nombre": "Troll",  "vidas": 5, "poder": 2, "modo": "perezoso" }
+    ]
+  }
 }

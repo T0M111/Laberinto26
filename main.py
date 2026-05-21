@@ -330,7 +330,53 @@ def demo_iterator():
     print("=" * 60)
 
 
+def demo_proxy():
+    """Demuestra el patrón Proxy: Tunel como proxy de Laberinto."""
+    import os
+    from tunel import Tunel
+    from laberinto_json_builder import LaberintoJsonBuilder
+
+    print("\n" + "=" * 60)
+    print("13. Demostración del Patrón Proxy (Tunel):")
+    print("=" * 60)
+
+    # --- Construcción desde JSON (requisito Builder) ---
+    config = os.path.join(os.path.dirname(__file__), "laberinto_config.json")
+    builder = LaberintoJsonBuilder(config)
+    director = Director(builder)
+    lab_principal = director.procesar()
+
+    print(f"\nLaberinto construido desde JSON: {lab_principal}")
+    for numero, habitacion in lab_principal.habitaciones.items():
+        print(f"\n   {habitacion}")
+        for orientacion, elemento in habitacion.orientaciones.items():
+            print(f"      - {orientacion}: {elemento}")
+
+    # --- El Tunel como lado de la Habitacion 1 ---
+    hab1 = lab_principal.obtener_habitacion(1)
+    tunel = hab1.obtener_lado(Norte())
+    print(f"\nLado Norte de Habitación 1 es: {tunel}  [tipo: {type(tunel).__name__}]")
+    print(f"Laberinto al que apunta: {tunel.laberinto}")
+
+    # --- El bicho entra al túnel: teletransporte ---
+    bicho_proxy = Bicho("Explorador", Perezoso())
+    hab1.entrar(bicho_proxy)
+    print(f"\n{bicho_proxy.nombre} está en: {bicho_proxy.posicion}")
+
+    print(f"\n{bicho_proxy.nombre} intenta entrar por el Norte (Tunel):")
+    tunel.entrar(bicho_proxy)
+    print(f"  Ahora está en: {bicho_proxy.posicion}  <- laberinto secundario")
+
+    print("\nEl Tunel (Proxy) delegó entrar() en el Laberinto real sin que")
+    print("el Bicho supiera que cruzó a otro laberinto.")
+
+    print("\n" + "=" * 60)
+    print("Fin demostración Proxy")
+    print("=" * 60)
+
+
 if __name__ == "__main__":
     main()
     demo_composite()
     demo_iterator()
+    demo_proxy()

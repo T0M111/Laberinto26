@@ -1,0 +1,43 @@
+{
+  "comentario": "Configuración del laberinto con soporte para el patrón Proxy (Tunel).",
+  "laberintos": [
+    {
+      "id": "principal",
+      "habitaciones": [
+        {
+          "numero": 1,
+          "lados": {
+            "norte": { "tipo": "tunel", "destino": "secundario" },
+            "sur":   { "tipo": "pared" },
+            "este":  { "tipo": "puerta", "id": "puerta1" },
+            "oeste": { "tipo": "pared" }
+          }
+        },
+        {
+          "numero": 2,
+          "lados": {
+            "norte": { "tipo": "pared" },
+            "sur":   { "tipo": "pared" },
+            "este":  { "tipo": "pared" },
+            "oeste": { "tipo": "puerta", "id": "puerta1" }
+          }
+        }
+      ]
+    },
+    {
+      "id": "secundario",
+      "habitaciones": [
+        {
+          "numero": 3,
+          "lados": {
+            "norte": { "tipo": "pared" },
+            "sur":   { "tipo": "pared" },
+            "este":  { "tipo": "pared" },
+            "oeste": { "tipo": "pared" }
+          }
+        }
+      ]
+    }
+  ],
+  "laberinto_raiz": "principal"
+}
